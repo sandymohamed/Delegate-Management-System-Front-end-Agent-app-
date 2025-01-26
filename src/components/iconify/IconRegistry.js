@@ -60,6 +60,8 @@ export const icons = {
     price: "arcticons:priceconverter",
     cart: "ic:baseline-production-quantity-limits",
     table: "majesticons:table-line",
+    invoice: "ic:baseline-receipt-long",
+    van: "mdi:truck-check",
 
 
 };

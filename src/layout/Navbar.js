@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Drawer, Link, List, ListItem, Stack } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import Iconify from '../components/iconify/Iconify';
 import { icons } from '../components/iconify/IconRegistry';
 
@@ -34,6 +34,17 @@ const LINKS = [
 
 const Navbar = ({ openNav, handleCloseNav }) => {
 
+
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        if (openNav) {
+            handleCloseNav();
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pathname, ]);
+
     return (
         <Drawer
             open={openNav}
@@ -48,6 +59,7 @@ const Navbar = ({ openNav, handleCloseNav }) => {
 
                 },
             }}
+            anchor="right"
         >
             <Stack spacing={4} alignItems="center" justifyContent="center" py={2} height="100%" >
 

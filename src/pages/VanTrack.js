@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import { getVanProducts } from '../services/dailyInventory.services';
-import { Box, Button, Card, CardContent, Container, Grid2, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Divider, Grid2, InputAdornment, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import Iconify from '../components/iconify/Iconify';
 import { icons } from '../components/iconify/IconRegistry';
 
 const VanTrack = () => {
 
   const [vanData, setVanData] = useState(null);
+  const [filterdVanData, setFilterdVanData] = useState(null);
   const [tableTheme, setTableTheme] = useState(false);
 
-  // TODO: add search for a product by name
+  const filterProducts = (searchTerm) => {
+    const filterdData = vanData?.filter(item => item?.product_name?.toLowerCase()?.indexOf(searchTerm) !== -1);
+    setFilterdVanData(filterdData);
 
+  }
 
   useEffect(() => {
     getVanProducts(6).then(res => {
-      console.log(res);
-      if (res && res.length) setVanData(res);
+      if (res && res.length) {
+        setVanData(res)
+        setFilterdVanData(res);
+      };
     })
 
 
@@ -27,13 +33,33 @@ const VanTrack = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           تتبع محتويات الشاحنة
         </Typography>
+
         <Stack direction="row" spacing={2} alignItems="center" justifyContent="start">
-          <Typography gutterBottom>  عدد النتجات : {vanData?.length || 0} </Typography>
+          <Typography gutterBottom>  عدد النتجات : {filterdVanData?.length || 0} </Typography>
           <Button onClick={() => setTableTheme(!tableTheme)}>   <Iconify icon={icons.table} width={24} /> </Button>
+          <TextField
+            id="input-with-icon-textfield"
+            label="بحث"
+            onChange={(e) => filterProducts(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Iconify icon={icons.search} width={24} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+            variant="standard"
+          />
+
         </Stack>
+
+        <Divider sx={{ my: 3 }} />
+
         <Grid2 container spacing={3} >
-          {!tableTheme ? vanData?.map((product) => (
-            <Grid2 item xs={12} sm={6} md={4} key={product?.product_id}>
+          {!tableTheme ? filterdVanData?.map((product) => (
+            <Grid2 item size={{ xs: 12, sm: 6, md: 4 }} key={product?.product_id}>
               <Card>
 
                 <CardContent>
@@ -41,12 +67,12 @@ const VanTrack = () => {
                     {product?.product_name}
                   </Typography>
 
-                  <Typography variant="h6" color={product.total_quantity > 5 ? "secondary" : "error"}>
-                    <Iconify icon={icons.cart} />   {product?.total_quantity} ج
+                  <Typography variant="h6" color={product.total_quantity > 5 ? "info" : "error"}>
+                    <Iconify icon={icons.cart} />   {product?.total_quantity}
                   </Typography>
 
-                  <Typography variant="h6" color="success">
-                    <Iconify icon={icons.price} />  {product?.price}
+                  <Typography variant="h6" color="warning">
+                    <Iconify icon={icons.price} />  {product?.price} ج
                   </Typography>
                 </CardContent>
 
@@ -55,24 +81,25 @@ const VanTrack = () => {
 
             </Grid2>
           )) : <TableContainer>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table sx={{ minWidth: 650, border: '1px solid #ccc' }} aria-label="simple table">
               <TableHead>
-                <TableRow>
-                  <TableCell>Product Name</TableCell>
-                  <TableCell align="right">Price</TableCell>
-                  <TableCell align="right">Quantity</TableCell>
+                <TableRow >
+                  <TableCell align="right">اسم المنتج </TableCell>
+                  <TableCell align="right">سعر الكرتونة</TableCell>
+                  <TableCell align="right">الكمية</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {vanData?.map((product) => (
+                {filterdVanData?.map((product) => (
                   <TableRow
                     key={product.product_id}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
-                    <TableCell component="th" scope="row">
+
+                    <TableCell component="th" scope="row" align="right">
                       {product.product_name}
                     </TableCell>
-                    <TableCell align="right">{product.price}</TableCell>
+                    <TableCell align="right">{product.price} ج </TableCell>
                     <TableCell align="right">{product.total_quantity}</TableCell>
                   </TableRow>
                 ))}

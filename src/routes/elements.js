@@ -11,3 +11,4 @@ const Loadable =  (Component) => (props) => (
 export const Login = Loadable(lazy(() => import('../pages/Login')));
 export const Dashboard = Loadable(lazy(() => import('../pages/Dashboard')));
 export const VanTrack = Loadable(lazy(() => import('../pages/VanTrack')));
+export const CreateInvoice = Loadable(lazy(() => import('../pages/CreateInvoice')));
