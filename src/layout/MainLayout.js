@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { IconButton, LinearProgress } from "@mui/material";
+import { Box, IconButton, LinearProgress, Stack } from "@mui/material";
 import { configureLoading } from "../utils/axiosInstance";
 import Header from "./Header";
 import Navbar from "./Navbar";
@@ -25,20 +25,22 @@ const MainLayout = () => {
     }, []);
 
     return (
-        <div>
+        <Stack direction="column" sx={{ minHeight: '100vh', backgroundColor: 'background.default' }}>
             {loading && <LinearProgress />}
             <Header />
+            <Box alignContent={'start'} justifyContent={'satrt'}>
 
-            <IconButton onClick={handleToggleNav} sx={{ mr: 1, color: 'text.primary' }}>
-                <Iconify icon="eva:menu-2-fill" />
-            </IconButton>
+                <IconButton onClick={handleToggleNav} sx={{ mr: 1, color: 'secondary.dark' }}>
+                    <Iconify icon="eva:menu-2-fill" />
+                </IconButton>
+            </Box>
 
-            <Navbar  openNav={openNav} handleCloseNav={handleCloseNav} />
+            <Navbar openNav={openNav} handleCloseNav={handleCloseNav} />
             <Outlet />
-            
+
             {/* <Footer /> */}
 
-        </div>
+        </Stack>
     )
 }
 

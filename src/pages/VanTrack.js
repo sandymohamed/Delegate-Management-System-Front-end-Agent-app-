@@ -81,7 +81,7 @@ const VanTrack = () => {
 
             </Grid2>
           )) : <TableContainer>
-            <Table sx={{ minWidth: 650, border: '1px solid #ccc' }} aria-label="simple table">
+            <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow >
                   <TableCell align="right">اسم المنتج </TableCell>

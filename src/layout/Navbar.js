@@ -11,6 +11,11 @@ const LINKS = [
         icon: icons.files
     },
     {
+        title: 'الشاحنة',
+        path: '/van',
+        icon: icons.files
+    },
+    {
         title: 'المنتجات',
         path: '/products',
         icon: icons.files
@@ -21,13 +26,23 @@ const LINKS = [
         icon: icons.files
     },
     {
-        title: 'المخزون',
-        path: '/stock',
+        title: 'الفواتير',
+        path: '/invoices',
         icon: icons.files
     },
     {
-        title: 'الموظفين',
-        path: '/employees',
+        title: 'انشاء فاتورة جديدة',
+        path: '/create-invoice',
+        icon: icons.files
+    },
+    {
+        title: 'العملاء',
+        path: '/customers',
+        icon: icons.files
+    },
+    {
+        title: 'اضافة عميل',
+        path: '/create-customer',
         icon: icons.files
     },
 ]
@@ -43,7 +58,7 @@ const Navbar = ({ openNav, handleCloseNav }) => {
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pathname, ]);
+    }, [pathname,]);
 
     return (
         <Drawer
@@ -59,7 +74,6 @@ const Navbar = ({ openNav, handleCloseNav }) => {
 
                 },
             }}
-            anchor="right"
         >
             <Stack spacing={4} alignItems="center" justifyContent="center" py={2} height="100%" >
 

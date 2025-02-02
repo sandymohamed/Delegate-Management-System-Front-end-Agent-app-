@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Navigate, useRoutes } from "react-router";
-import { Login, Dashboard, VanTrack } from './elements';
+import { Login, Dashboard, VanTrack, CreateInvoice, AgentInvoices, InvoiceDetails, CustomersList, CustomerInvoices, CreateCustomer } from './elements';
 import ProtectedRoute from "./ProtectedRoute";
 import { Typography } from "@mui/material";
 import MainLayout from "../layout/MainLayout";
@@ -17,7 +17,12 @@ export default function Router() {
                 { element: <Navigate to="/dashboard" replace />, index: true },
                 { path: "/dashboard", element: <Dashboard /> },
                 { path: "/van", element: <VanTrack /> },
-                { path: "/tasks", element: <Typography> lol </Typography> },
+                { path: "/create-invoice", element: <CreateInvoice /> },
+                { path: "/invoices", element: <AgentInvoices /> },
+                { path: "/invoice/:id", element: <InvoiceDetails /> },
+                { path: "/customers", element: <CustomersList /> },
+                { path: "/customer-invoices/:id", element: <CustomerInvoices /> },
+                { path: "/create-customer", element: <CreateCustomer /> },
             ],
         },
         { path: "*", element: <>Page 404</> },

@@ -23,8 +23,6 @@ const Header = () => {
             <Typography>{vanDetails?.name}</Typography>
 
             <AccountPopover />
-
-
         </Stack>
     )
 }
