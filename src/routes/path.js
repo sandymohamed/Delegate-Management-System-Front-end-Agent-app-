@@ -1,8 +1,10 @@
 import * as React from "react";
 import { Navigate, useRoutes } from "react-router";
-import { Login, Dashboard, VanTrack, CreateInvoice, AgentInvoices, InvoiceDetails, CustomersList, CustomerInvoices, CreateCustomer } from './elements';
+import { Login, Dashboard, VanTrack, CreateInvoice, AgentInvoices, 
+    InvoiceDetails, CustomersList, CustomerInvoices, CreateCustomer, ProductsList, 
+    AddPayment
+} from './elements';
 import ProtectedRoute from "./ProtectedRoute";
-import { Typography } from "@mui/material";
 import MainLayout from "../layout/MainLayout";
 
 export default function Router() {
@@ -23,26 +25,17 @@ export default function Router() {
                 { path: "/customers", element: <CustomersList /> },
                 { path: "/customer-invoices/:id", element: <CustomerInvoices /> },
                 { path: "/create-customer", element: <CreateCustomer /> },
+                { path: "/create-payment/:invoice_id", element: <AddPayment /> },
+                { path: "/products", 
+                    element: <ProductsList /> ,
+                     children: [
+                    { path: "/products/create-product", element: <ProductsList /> },
+                    { path: "/products/edit-product", element: <ProductsList /> },
+                ]},
+
             ],
         },
         { path: "*", element: <>Page 404</> },
     ]);
 }
-
-
-
-// import {
-//     type RouteConfig,
-//     route,
-//     index,
-//   } from "@react-router/dev/routes";
-  
-//   export default [
-//     // parent route
-//     route("dashboard", "./dashboard.tsx", [
-//       // child routes
-//       index("./home.tsx"),
-//       route("settings", "./settings.tsx"),
-//     ]),
-//   ] satisfies RouteConfig;
   

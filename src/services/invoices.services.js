@@ -25,6 +25,26 @@ export const getInvoiceById = async (id) => {
 
 export const createNewInvoice = async (data) => {
     const response = await axiosInstance.post('/invoices/', data)
+        .then(res => res?.data)
+        .catch(err => err);
+
+    return response;
+}
+
+
+
+
+// ******************************** PAYMENTS:
+export const addPayment = async (data) => {
+    const response = await axiosInstance.post('/payments/', data)
+        .then(res => res?.data)
+        .catch(err => err);
+
+    return response;
+}
+
+export const getPaymentById = async (id) => {
+    const response = await axiosInstance.get(`/payments/${id}`)
         .then(res => res?.data?.data)
         .catch(err => err);
 

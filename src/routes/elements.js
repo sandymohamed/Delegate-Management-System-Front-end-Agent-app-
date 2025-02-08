@@ -17,3 +17,5 @@ export const InvoiceDetails = Loadable(lazy(() => import('../pages/InvoiceDetail
 export const CustomersList = Loadable(lazy(() => import('../pages/CustomersList')));
 export const CustomerInvoices = Loadable(lazy(() => import('../pages/CustomerInvoices')));
 export const CreateCustomer = Loadable(lazy(() => import('../pages/CreateCustomer')));
+export const ProductsList = Loadable(lazy(() => import('../pages/ProductsList')));
+export const AddPayment = Loadable(lazy(() => import('../pages/AddPayment')));

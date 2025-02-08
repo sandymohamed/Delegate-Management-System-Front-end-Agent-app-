@@ -100,7 +100,6 @@ const CustomerInvoices = () => {
                 <TableHeadRow>
                   <TableHeadCell>رقم الفاتورة</TableHeadCell>
                   <TableHeadCell>العميل</TableHeadCell>
-                  {/* TODO: formate these dates */}
                   <TableHeadCell>تاريخ انشاء الفاتورة </TableHeadCell>
                   <TableHeadCell>تاريخ الاستحقاق</TableHeadCell>
 
@@ -108,10 +107,11 @@ const CustomerInvoices = () => {
                   <TableHeadCell>التخفيض</TableHeadCell>
 
                   <TableHeadCell>السعر بعد التخفيض</TableHeadCell>
-                  {/* TODO: add it to label with some styles or icon */}
                   <TableHeadCell>تم الدفع بالكامل؟</TableHeadCell>
                   <TableHeadCell>اجمالى ما تم دفعه</TableHeadCell>
                   <TableHeadCell>اجمالى ما لم يتم دفعه</TableHeadCell>
+                  <TableHeadCell > تسديد مبلغ </TableHeadCell>
+
                   <TableHeadCell>   التفاصيل </TableHeadCell>
                 </TableHeadRow>
               </TableHead>
@@ -133,8 +133,10 @@ const CustomerInvoices = () => {
                     <TableBodyCell >{row.is_paid ? <Chip label="نعم" color="primary" /> : <Chip label="لا" color="error" />}</TableBodyCell>
                     <TableBodyCell>{row.total_paid}</TableBodyCell>
                     <TableBodyCell>{row.total_unpaid}</TableBodyCell>
-                    {/* TODO : enhance products show */}
 
+                    <TableBodyCell >
+                     {row.is_paid ?  <Typography variant='caption' component={Link}> اذهب لتسديد مبلغ </Typography>:  <Link component={RouterLink} to={`/create-payment/${row.id}`}> اذهب لتسديد مبلغ </Link>}
+                    </TableBodyCell>
 
                     <TableBodyCell>
                       <Link component={RouterLink} to={`/invoice/${row.id}`}> تفاصيل </Link>

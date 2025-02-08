@@ -45,6 +45,11 @@ const LINKS = [
         path: '/create-customer',
         icon: icons.files
     },
+    {
+        title: 'تسديد مبلغ',
+        path: '/create-payment',
+        icon: icons.files
+    },
 ]
 
 const Navbar = ({ openNav, handleCloseNav }) => {

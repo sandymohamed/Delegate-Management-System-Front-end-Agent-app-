@@ -62,6 +62,7 @@ export const icons = {
     table: "majesticons:table-line",
     invoice: "ic:baseline-receipt-long",
     van: "mdi:truck-check",
-
+    qrCode: "ri:qr-scan-line",
+    box: "mingcute:empty-box-line",
 
 };

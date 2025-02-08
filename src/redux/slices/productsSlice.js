@@ -3,6 +3,8 @@ import axiosInstance from "../../utils/axiosInstance";
 
 // Fetch products
 export const fetchProducts = createAsyncThunk('products/fetchProducts', async (vanId) => {
+   console.log("vanId", vanId);
+   
     const response = await axiosInstance.get(`/daily-inventory/van-products/${vanId}`);
 
     if (response.data.success) {

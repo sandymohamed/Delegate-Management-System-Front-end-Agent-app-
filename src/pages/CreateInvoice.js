@@ -1,47 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Button, Container, Grid2, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
-import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-import { getAllCustomers } from '../services/customers.services';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigate } from 'react-router-dom';
+import {
+    Box, Button, Container, Grid2, Paper, Table, TableBody, TableCell,
+    TableContainer, TableHead, TableRow, Typography
+} from '@mui/material'
+import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { FormAutoComplete, FormDatePicker, FormTextField } from '../components';
 import { fetchProducts } from '../redux/slices/productsSlice';
 import { createNewInvoice } from '../services/invoices.services';
+import { getAllCustomers } from '../services/customers.services';
 import { formatDate } from '../utils/dateFormatter';
+import { fetchVan } from '../redux/slices/vanSlice';
+import { useAuth } from '../context/AuthContext';
 // -------------------------------------------------------
 const CreateInvoice = () => {
 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { vanProducts, loading, error } = useSelector(state => state.products);
+    const { vanProducts } = useSelector(state => state.products);
+    const { vanDetails } = useSelector(state => state.van);
+    // const { user } = useAuth();
 
     const createInvoiceSchema = Yup.object().shape({
 
-        customer_id: Yup.mixed().required('العميل مطلوب').nullable(true),
+        customer_id: Yup.mixed().required('العميل مطلوب').nullable(false),
         invoice_number: Yup.string(),
         discount: Yup.number().min(0, 'يجب ان يكون الخصم اكبر من 0'),
-        due_date: Yup.string(),
-        //     products: Yup.array().of(Yup.object().shape({
-        //         product_id: Yup.mixed().nullable().required('المنتج مطلوب'),
-        //         quantity: Yup.number().required('الكمية مطلوبة'),
-        //         price: Yup.number().required('السعر مطلوب')
-        //     })).min(1, 'يجب ان يكون هناك منتج واحد على الاقل')
-        // });
-        // products: Yup.array().of(
-        //     Yup.object().shape({
-        //         product_id: Yup.mixed().required('المنتج مطلوب'),
-        //         quantity: Yup.number()
-        //             .required('الكمية مطلوبة')
-        //             .test('max-quantity', 'الكمية أكبر من المتاحة', function (value) {
-        //                 const productId = this.parent.product_id;
-        //                 const product = vanProducts.find((p) => p.product_id === productId);
-        //                 return value <= (product?.quantity || 0);
-        //             }).min(1, 'الكمية يجب ان تكون اكبر من 0'),
-        //         price: Yup.number().required('السعر مطلوب'),
-        //     })
-        // ).min(1, 'يجب ان يكون هناك منتج واحد على الاقل'),
-
-
+        due_date: Yup.string().nullable(true),
         products: Yup.array().of(
             Yup.object().shape({
                 product_id: Yup.mixed()
@@ -79,48 +67,6 @@ const CreateInvoice = () => {
     });
 
 
-    // const createInvoiceSchema = Yup.object().shape({
-    //     customer_id: Yup.mixed().required('العميل مطلوب').nullable(true),
-    //     invoice_number: Yup.string(),
-    //     discount: Yup.number().min(0, 'يجب ان يكون الخصم اكبر من 0'),
-    //     due_date: Yup.string(),
-    //     products: Yup.array()
-    //         .of(
-    //             Yup.object().shape({
-    //                 product_id: Yup.mixed()
-    //                     .nullable()
-    //                     .required('المنتج مطلوب')
-    //                     .test('valid-product', 'المنتج غير صالح', function (value) {
-    //                         return !!vanProducts.find((p) => p.product_id === value.product_id);
-    //                     }),
-    //                 quantity: Yup.number()
-    //                     .required('الكمية مطلوبة')
-    //                     .positive('الكمية يجب أن تكون أكبر من صفر')
-    //                     .test('max-quantity', 'الكمية أكبر من المتاحة', function (value) {
-    //                         const productId = this.parent.product_id.product_id;
-    //                         const product = vanProducts.find((p) => p.product_id === productId);
-    //                         return value <= (product?.total_quantity || 0);
-    //                     }),
-    //                 price: Yup.number()
-    //                     .required('السعر مطلوب')
-    //                     .positive('السعر يجب أن يكون أكبر من صفر')
-    //                     .test('match-product-price', 'السعر غير صالح', function (value) {
-    //                         const productId = this.parent.product_id.product_id;
-    //                         const product = vanProducts.find((p) => p.product_id === productId);
-    //                         return value === (product?.price || 0);
-    //                     }),
-    //             })
-    //         )
-    //         .min(1, 'يجب ان يكون هناك منتج واحد على الاقل')
-    //         .test('non-empty-products', 'المنتجات تحتوي على قيم افتراضية', (products) =>
-    //             products.every(
-    //                 (product) =>
-    //                     product.product_id &&
-    //                     product.quantity > 0 &&
-    //                     Number(product?.price) > 0
-    //             )
-    //         ),
-    // });
     const [customers, setCustomers] = useState([]);
 
     const defaultValues = {
@@ -131,7 +77,8 @@ const CreateInvoice = () => {
             product_id: '',
             quantity: 0,
             price: 0
-        }]
+        }],
+        van_id: vanDetails.id
     }
 
     const methods = useForm({
@@ -169,13 +116,21 @@ const CreateInvoice = () => {
 
     useEffect(() => {
         getAllCustomers().then(res => {
-            if (res && res.length > 0) setCustomers(res);
+            console.log(res);
+            if (res && res.data.length) setCustomers(res.data);
         });
 
-        // TODO: handle van in redux
-        dispatch(fetchProducts(6));
+        dispatch(fetchProducts(vanDetails.id));
 
-    }, [dispatch]);
+    }, [dispatch, vanDetails]);
+
+    // useEffect(() => {
+     
+    //     // TODO: handle van in redux
+    //     dispatch(fetchVan(user?.id));
+
+
+    // }, [dispatch,user?.id]);
 
     const [selectedProductsDetails, setSelectedProductsDetails] = useState(null);
 
@@ -197,14 +152,14 @@ const CreateInvoice = () => {
     const onSubmit = async (data) => {
         console.log("errors", errors);
 
-        data.customer_id = data.customer_id.id;
+        data.customer_id = data?.customer_id?.id;
         data.due_date = formatDate(data.due_date);
 
         if (data.products.length) {
             data.products = data.products.map((product) => {
                 return {
                     ...product,
-                    product_id: product.product_id.product_id,
+                    product_id: product?.product_id?.product_id,
                 }
             })
         }
@@ -213,7 +168,12 @@ const CreateInvoice = () => {
 
         try {
             await createNewInvoice(data).then((res) => {
-                alert(res?.message);
+                if(res.success){
+                    alert(res?.message);
+                    console.log("res", res);   
+                    // TODO test this
+                    navigate('/create-payment/' + res?.invoice_id);
+                }
             })
         } catch (err) {
             console.log(err);
@@ -353,10 +313,10 @@ const CreateInvoice = () => {
                 </Grid2>
 
                 <Grid2 size={{ xs: 12, sm: 3 }}>
-                    <Paper sx={{p:2}}>
+                    <Paper sx={{ p: 2 }}>
                         <Typography variant="h6" >تفاصيل المنتجات :   </Typography>
                         <TableContainer >
-                            <Table  stickyHeader aria-label="sticky table">
+                            <Table stickyHeader aria-label="sticky table">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>اسم المنتج</TableCell>

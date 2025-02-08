@@ -17,6 +17,7 @@ const VanTrack = () => {
   }
 
   useEffect(() => {
+    // TODO: add id dynamically
     getVanProducts(6).then(res => {
       if (res && res.length) {
         setVanData(res)
