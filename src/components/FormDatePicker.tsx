@@ -1,0 +1,115 @@
+// import { Box, TextField } from "@mui/material";
+// import { DatePicker } from "@mui/x-date-pickers";
+// import React from "react";
+// import { Control, Controller } from "react-hook-form";
+
+// interface FormDatePickerProps {
+//   name: string;
+//   control: Control;
+//   label: string;
+//   rest?: any;
+// }
+
+// const FormDatePicker: React.FC<FormDatePickerProps> = ({
+//   name,
+//   control,
+//   label,
+//   ...rest
+// }) => {
+//   return (
+//     <Controller
+//       name={name}
+//       control={control}
+//       render={({ field, fieldState: { error } }) => (
+//         <DatePicker
+//           {...rest}
+//           {...field}
+//           inputFormat="dd/MM/yyyy"
+//           label={label}
+//           renderInput={(params) => (
+//             <TextField
+//               {...params}
+//               error={!!error?.message}
+//               helperText={error?.message}
+//               slotProps={{ inputLabel: { shrink: true } }}
+//             />
+//           )}
+//         />
+//       )}
+//     />
+//   );
+// };
+
+// export default FormDatePicker;
+
+import { TextField } from "@mui/material";
+// import DatePicker from "@mui/lab/DatePicker";
+import { DatePicker } from "@mui/x-date-pickers";
+import React from "react";
+import { Control, Controller } from "react-hook-form";
+
+interface FormDatePickerProps {
+  name: string;
+  control: any;
+  label: string;
+  rest?: any;
+}
+
+const FormDatePicker: React.FC<FormDatePickerProps> = ({
+  name,
+  control,
+  label,
+  ...rest
+}) => {
+  return (
+    <>
+    
+       <Controller
+         name={name}
+         control={control}
+         render={({ field, fieldState: { error } }) => (  
+        <DatePicker
+          {...rest}
+          {...field}
+          format="dd/MM/yyyy"
+          label={label}
+          //  renderInput={(params: any) => (
+          //    <TextField
+          //    variant="outlined"
+          //      {...params}
+          //      error={!!error?.message}
+          //      helperText={error?.message}
+          //      slotProps={{ inputLabel: { shrink: true } }}
+          //    />
+          //  )}
+          />
+            
+        )}
+        />
+        </>
+  );
+};
+// return (
+//   <Controller
+//     name={name}
+//     control={control}
+//     render={({ field, fieldState: { error } }) => (
+//       <DatePicker
+//         {...rest}
+//         {...field}
+//         format="DD/MM/YYYY" // Corrected from `inputFormat` (MUI v6+)
+//         value={field.value} // Ensure correct date format
+//         onChange={(date) => field.onChange(date)} // Ensure proper event handling
+//         slotProps={{
+//           textField: {
+//             error: !!error,
+//             helperText: (error as FieldError)?.message, // Ensure correct type for error messages
+//           },
+//         }}
+//       />
+//     )}
+//   />
+// );
+// };
+
+export default FormDatePicker;
