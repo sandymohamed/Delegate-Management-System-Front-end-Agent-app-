@@ -24,7 +24,13 @@ import {
 import Iconify from "../components/iconify/Iconify";
 import { icons } from "../components/iconify/IconRegistry";
 import { getAllCustomers } from "../services/customers.services";
-import { TableBodyCell, TableHeadCell, TableHeadRow } from "../components";
+import {
+  PaymentForm,
+  SimpleDialog,
+  TableBodyCell,
+  TableHeadCell,
+  TableHeadRow,
+} from "../components";
 import { TypeCustomer } from "../types/customers";
 // --------------------------------------------------------
 
@@ -36,13 +42,26 @@ const CustomersList: React.FC = () => {
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(100);
 
-  useEffect(() => {
+  // Dialog
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleReloadPage = () => {
     getAllCustomers(searchTerm, rowsPerPage, page + 1).then((res) => {
       console.log(res);
 
       setTableData(res?.data);
       setTotalDataLength(res?.total);
     });
+  };
+
+  useEffect(() => {
+    handleReloadPage();
   }, [searchTerm, rowsPerPage, page]);
 
   return (
@@ -60,15 +79,13 @@ const CustomersList: React.FC = () => {
         >
           <Box>
             <Typography gutterBottom>
-             
-              عدد العملاء : {totalDataLength}{" "}
+              عدد العملاء : {totalDataLength}
             </Typography>
             <Button
               variant="contained"
               component={RouterLink}
               to={`/create-customer`}
             >
-             
               اضافة عميل جديد
             </Button>
           </Box>
@@ -110,49 +127,60 @@ const CustomersList: React.FC = () => {
                   <TableHeadCell>العنوان </TableHeadCell>
                   <TableHeadCell>التفاصيل </TableHeadCell>
                   <TableHeadCell>الفواتير السابقة </TableHeadCell>
-                  <TableHeadCell>انشاء فاتورة لهذا العميل </TableHeadCell>
+                  <TableHeadCell> تسديد مبلغ</TableHeadCell>
                 </TableHeadRow>
               </TableHead>
               <TableBody>
                 {TableData && TableData?.length
                   ? TableData?.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableBodyCell>{row?.name}</TableBodyCell>
-                        <TableBodyCell>
-                          {row?.customer_store_name}{" "}
-                        </TableBodyCell>
-                        <TableBodyCell>
-                          {row?.total_unpaid_invoices}{" "}
-                        </TableBodyCell>
-                        <TableBodyCell>{row?.phone}</TableBodyCell>
-                        <TableBodyCell>{row?.location}</TableBodyCell>
-                        <TableBodyCell>{row?.info}</TableBodyCell>
+                      <>
+                        <TableRow
+                          key={row.id}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
+                        >
+                          <TableBodyCell>{row?.name}</TableBodyCell>
+                          <TableBodyCell>
+                            {row?.customer_store_name}
+                          </TableBodyCell>
+                          <TableBodyCell>
+                            {row?.total_unpaid_invoices} ج
+                          </TableBodyCell>
+                          <TableBodyCell>{row?.phone}</TableBodyCell>
+                          <TableBodyCell>{row?.location}</TableBodyCell>
+                          <TableBodyCell>{row?.info}</TableBodyCell>
 
-                        <TableBodyCell>
-                          <Link
-                            component={RouterLink}
-                            to={`/customer-invoices/${row?.id}`}
-                          >
-                           
-                            تفاصيل{" "}
-                          </Link>
-                        </TableBodyCell>
+                          <TableBodyCell>
+                            <Link
+                              component={RouterLink}
+                              to={`/customer-invoices/${row?.id}`}
+                            >
+                              تفاصيل
+                            </Link>
+                          </TableBodyCell>
 
-                        <TableBodyCell>
-                          <Link
-                            component={RouterLink}
-                            to={`/create-invoice/${row?.id}`}
-                          >
-                           
-                            انشاء فاتورة{" "}
-                          </Link>
-                        </TableBodyCell>
-                      </TableRow>
+                          <TableBodyCell>
+                            <Button
+                              color="success"
+                              variant="text"
+                              onClick={handleClickOpen}
+                            >
+                              تسديد مبلغ لهذا العميل
+                            </Button>
+                          </TableBodyCell>
+                        </TableRow>
+                        <SimpleDialog
+                          open={open}
+                          onClose={handleClose}
+                          children={
+                            <PaymentForm
+                              customer_id={row?.id}
+                              doAfterSubmit={handleReloadPage}
+                            />
+                          }
+                        />
+                      </>
                     ))
                   : null}
               </TableBody>
@@ -173,8 +201,7 @@ const CustomersList: React.FC = () => {
             >
               {/* dropdown for page size */}
               <Typography gutterBottom>
-               
-                عدد الفواتير فى الصفحة : {rowsPerPage || 0}{" "}
+                عدد الفواتير فى الصفحة : {rowsPerPage || 0}
               </Typography>
               <Select
                 value={rowsPerPage}

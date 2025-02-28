@@ -1,5 +1,5 @@
 import { InvoiceFormData } from "../types/invoice";
-import { TypePaymentSubmitData } from "../types/payment";
+import { TypePaymentFOrCustomerSubmitData, TypePaymentSubmitData } from "../types/payment";
 import axiosInstance from "../utils/axiosInstance";
 
 export const getAllInvoices = async (
@@ -51,6 +51,14 @@ export const createNewInvoice = async (data: InvoiceFormData) => {
 export const addPayment = async (data: TypePaymentSubmitData) => {
   const response = await axiosInstance
     .post("/payments/", data)
+    .then((res) => res?.data)
+    .catch((err) => err);
+
+  return response;
+};
+export const addPaymentForCustomer = async (data: TypePaymentFOrCustomerSubmitData) => {
+  const response = await axiosInstance
+    .post("/payments/customer", data)
     .then((res) => res?.data)
     .catch((err) => err);
 

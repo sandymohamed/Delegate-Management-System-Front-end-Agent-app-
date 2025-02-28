@@ -96,7 +96,6 @@ import axios from "axios";
 import { createContext, useContext, useState, useEffect } from "react";
 import { API_BASE_URL } from '../global-config';
 import { TypeUser } from "../types/user";
-import { AnyMessageParams } from "yup";
 // -----------------------------------------
 type TypeAuthProviderProps = {
     children: React.ReactNode;

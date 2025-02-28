@@ -41,6 +41,7 @@ const CreateCustomer: React.FC = () => {
 
   const {
     handleSubmit,
+    reset,
     formState: { isLoading },
   } = methods;
 
@@ -48,8 +49,9 @@ const CreateCustomer: React.FC = () => {
     console.log("data", data);
 
     try {
-      await addNewCustomer(data).then((res) => {
+      await addNewCustomer(data).then(() => {
         alert("تم اضافة العميل بنجاح");
+        reset();
       });
     } catch (err) {
       console.log(err);

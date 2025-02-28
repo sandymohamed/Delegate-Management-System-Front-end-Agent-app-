@@ -8,14 +8,16 @@ export type TypePayment = {
   user_name: string;
 };
 
-
-
 export type AddPaymentFormData = {
   amount: string;
   date?: string;
-}
+};
 
 export type TypePaymentSubmitData = AddPaymentFormData & {
-    invoice_id: string;
-    user_id:  number;
-  }
+  invoice_id: string;
+  user_id: number;
+};
+export type TypePaymentFOrCustomerSubmitData = AddPaymentFormData & {
+  customer_id: number;
+  user_id: number;
+};

@@ -5,10 +5,10 @@ import { AxiosInstance } from 'axios';
 
 // Loading variable
 let activeRequests = 0;
-let setLoading = (iaLoading: boolean) => { };
+let setLoading = (isLoading: boolean) => { };
 
 // Function to configure the loading state management
-export const configureLoading = (loadingSetter: (iaLoading: boolean) => void) => {
+export const configureLoading = (loadingSetter: (isLoading: boolean) => void) => {
     setLoading = loadingSetter;
 };
 

@@ -24,8 +24,9 @@ const AgentInvoices: React.FC = () => {
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(100);
 
+  
   useEffect(() => {
-    getAllInvoices(user.id, searchTerm, rowsPerPage, page + 1).then(res => {
+    getAllInvoices(user?.id||0, searchTerm, rowsPerPage, page + 1).then(res => {
       setTableData(res?.data);
       setTotalDataLength(res?.total)
     })

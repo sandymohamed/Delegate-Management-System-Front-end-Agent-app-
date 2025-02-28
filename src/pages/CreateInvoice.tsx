@@ -19,7 +19,6 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  Controller,
   FormProvider,
   useFieldArray,
   useForm,
@@ -53,10 +52,10 @@ const CreateInvoice: React.FC = () => {
   // const { user } = useAuth();
 
   const createInvoiceSchema = Yup.object().shape({
-    customer_id: Yup.mixed().required("العميل مطلوب").nullable(),
+    customer_id: Yup.mixed().required("العميل مطلوب"),
     invoice_number: Yup.string(),
     discount: Yup.number().min(0, "يجب ان يكون الخصم اكبر من 0"),
-    due_date: Yup.string().nullable(),
+    due_date: Yup.string().required("تاريخ الاستحقاق مطلوب"),
     products: Yup.array()
       .of(
         Yup.object().shape({
@@ -286,7 +285,7 @@ const CreateInvoice: React.FC = () => {
                     name="due_date"
                     control={methods.control}
                     label="تاريخ استحقاق الفاتورة"
-                  />
+                    />
 
                   <FormTextField
                     name="discount"
