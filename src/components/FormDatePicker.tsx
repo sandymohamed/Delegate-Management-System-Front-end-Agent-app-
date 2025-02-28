@@ -42,11 +42,10 @@
 
 // export default FormDatePicker;
 
-import { Box, TextField, Typography } from "@mui/material";
-// import DatePicker from "@mui/lab/DatePicker";
+import { Box, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import React from "react";
-import { Control, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 
 interface FormDatePickerProps {
   name: string;
@@ -61,30 +60,27 @@ const FormDatePicker: React.FC<FormDatePickerProps> = ({
   label,
   ...rest
 }) => {
-  return ( <Controller
-         name={name}
-         control={control}
-         render={({ field, fieldState: { error } }) =>{ 
-          console.log("err", error);
-          
-          return(  
-            <Box sx={{flexDirection: 'column'}}>
-        <DatePicker
-          {...rest}
-          {...field}
-          format="dd/MM/yyyy"
-          label={label}
-         
-          sx={{
-            width: "100%",
-          }}
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: { error } }) => (
+        <Box sx={{ flexDirection: "column" }}>
+          <DatePicker
+            {...rest}
+            {...field}
+            format="dd/MM/yyyy"
+            label={label}
+            sx={{ width: "100%" }}
           />
-            {error && <Typography variant="caption" color="error">{error?.message}</Typography>}
-            </Box>
-        )
-      }}
-        />
-      
+          {error && (
+            <Typography variant="caption" color="error">
+              {error?.message}
+            </Typography>
+          )}
+        </Box>
+      )}
+    />
   );
 };
 // return (

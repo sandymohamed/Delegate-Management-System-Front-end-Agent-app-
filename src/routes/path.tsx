@@ -12,6 +12,7 @@ import {
   CreateCustomer,
   ProductsList,
   AddPayment,
+  CreateProduct,
 } from "./elements";
 import MainLayout from "../layout/MainLayout";
 import ProtectedRoute from "./ProtectedRoute";
@@ -39,10 +40,12 @@ const Router: React.FC = () => {
         { path: "/create-payment/:invoice_id", element: <AddPayment /> },
         {
           path: "/products",
-          element: <ProductsList />,
+          // element: <ProductsList />,
           children: [
-            { path: "/products/create-product", element: <ProductsList /> },
-            { path: "/products/edit-product", element: <ProductsList /> },
+            { element: <Navigate to="/products/list" replace />, index: true },
+            { path: "/products/list", element: <ProductsList /> },
+            { path: "/products/create-product", element: <CreateProduct /> },
+            { path: "/products/edit-product", element: <CreateProduct /> },
           ],
         },
       ],

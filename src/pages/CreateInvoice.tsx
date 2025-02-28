@@ -15,14 +15,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
-import {
-  FormProvider,
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { FormAutoComplete, FormDatePicker, FormTextField } from "../components";
 import { fetchProducts } from "../redux/slices/productsSlice";
 import { createNewInvoice } from "../services/invoices.services";
@@ -106,11 +101,9 @@ const CreateInvoice: React.FC = () => {
         "المنتجات تحتوي على قيم افتراضية",
         (products: any) =>
           products!.every(
-            (product: any) =>
-              product.product_id &&
-              product.quantity > 0 
-              // &&
-              // Number(product?.price) > 0
+            (product: any) => product.product_id && product.quantity > 0
+            // &&
+            // Number(product?.price) > 0
           )
       ),
   });
@@ -137,7 +130,6 @@ const CreateInvoice: React.FC = () => {
   const {
     control,
     handleSubmit,
-    register,
     watch,
     formState: { errors, isLoading },
   } = methods;
@@ -177,9 +169,6 @@ const CreateInvoice: React.FC = () => {
   // }, [dispatch,user?.id]);
 
   useEffect(() => {
-    console.log("watchedProducts", watchedProducts);
-    console.log("vanProducts", vanProducts);
-
     setSelectedProductsDetails(
       watchedProducts.map((product: VanProduct) => {
         const selectedProduct = vanProducts.find(
@@ -206,7 +195,7 @@ const CreateInvoice: React.FC = () => {
       due_date: formatDate(data.due_date || ""),
       products: data.products?.map((product) => ({
         ...product,
-        price:product?.product_id?.price,
+        price: product?.product_id?.price,
         product_id: product?.product_id?.product_id,
       })),
     };
@@ -285,7 +274,7 @@ const CreateInvoice: React.FC = () => {
                     name="due_date"
                     control={methods.control}
                     label="تاريخ استحقاق الفاتورة"
-                    />
+                  />
 
                   <FormTextField
                     name="discount"
@@ -387,20 +376,21 @@ const CreateInvoice: React.FC = () => {
                       //   />
                       // )}
 */}
-                      <Typography   sx={{
+                      <Typography
+                        sx={{
                           border: "1px solid #ccc",
                           padding: "8px",
                           borderRadius: "4px",
                           marginTop: "8px",
                         }}
                       >
-               سعر القطعة : 
+                        سعر القطعة :
                         <Typography
                           component="span"
                           variant="h5"
                           color="secondary"
                         >
-                           {selectedProduct?.price}
+                          {selectedProduct?.price}
                         </Typography>
                       </Typography>
 

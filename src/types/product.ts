@@ -18,3 +18,12 @@ export type TypeProductsListResponse = {
     data: TypeProductsList[];
   };
 };
+
+export type CreateProductFormData = {
+  name: string;
+  price: number;
+  description?: string | null;
+  qr_code?: string | null;
+  stock_quantity: number;
+  exp_date?: string | null;
+};

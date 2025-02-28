@@ -1,4 +1,4 @@
-import { TypeProductsList } from "../types/product";
+import { CreateProductFormData } from "../types/product";
 import axiosInstance from "../utils/axiosInstance"
 
 export const getProductsList = async ( searchTerm: string | null | undefined = null, limit: number = 100, page: number) => {
@@ -16,7 +16,7 @@ export const getProductById = async (id: number) => {
 
     return response;
 }
-export const addNewProduct = async (data:TypeProductsList) => {
+export const addNewProduct = async (data:CreateProductFormData) => {
     const response = await axiosInstance.post('/products/create', data)
         .then(res => res?.data?.data)
         .catch(err => err);
