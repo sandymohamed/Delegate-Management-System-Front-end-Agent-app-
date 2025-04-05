@@ -18,7 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
-import { FormAutoComplete, FormDatePicker, FormTextField } from "../components";
+import { FormAutoComplete, FormDatePicker, FormTextField, SimpleDialog } from "../components";
 import { fetchProducts } from "../redux/slices/productsSlice";
 import { createNewInvoice } from "../services/invoices.services";
 import { getAllCustomers } from "../services/customers.services";
@@ -27,6 +27,7 @@ import { TypeCustomer } from "../types/customers";
 import { AppDispatch, RootState } from "../redux/store";
 import { Van, VanProduct } from "../types/Van";
 import { InvoiceFormData, InvoiceProduct } from "../types/invoice";
+import CreateCustomer from "./CreateCustomer";
 
 // -----------------------------------------------------------
 const CreateInvoice: React.FC = () => {
@@ -38,6 +39,17 @@ const CreateInvoice: React.FC = () => {
   const vanDetails: Van | null = useSelector(
     (state: RootState) => state.van.vanDetails
   );
+
+  
+    // Dialog
+    const [open, setOpen] = useState(false);
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+    const handleClose = () => {
+      setOpen(false);
+    };
+
 
   const [customers, setCustomers] = useState<TypeCustomer[]>([]);
   const [selectedProductsDetails, setSelectedProductsDetails] = useState<
@@ -131,7 +143,7 @@ const CreateInvoice: React.FC = () => {
     control,
     handleSubmit,
     watch,
-    formState: { errors, isLoading },
+    formState: { errors, isSubmitting },
   } = methods;
 
   const watchedProducts = watch("products") || [];
@@ -214,7 +226,16 @@ const CreateInvoice: React.FC = () => {
 
   return (
     <Container>
+
       <Typography variant="h4">انشاء فاتورة جديدة</Typography>
+      
+              <SimpleDialog
+                open={open}
+                onClose={handleClose}
+                children={
+                  <CreateCustomer/>
+                }
+              />
       <Grid2 container spacing={2}>
         <Grid2 size={{ xs: 12, sm: 9 }}>
           <Paper sx={{ p: 2 }}>
@@ -260,6 +281,14 @@ const CreateInvoice: React.FC = () => {
                         to={`/create-customer`}
                       >
                         اضافة عميل؟
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="info"
+                        onClick={handleClickOpen}
+
+                      >
+                    vv    اضافة عميل؟
                       </Button>
                     </Box>
                   </>
@@ -460,7 +489,7 @@ const CreateInvoice: React.FC = () => {
                     type="submit"
                     variant="contained"
                     color="secondary"
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   >
                     حفظ
                   </Button>

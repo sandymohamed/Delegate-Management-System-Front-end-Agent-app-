@@ -61,7 +61,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
 
   const {
     handleSubmit,
-    formState: { isLoading },
+    formState: { isSubmitting },
   } = methods;
 
   const onSubmit = async (data: AddPaymentFormData) => {
@@ -82,7 +82,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
           if (res.success) {
             alert("تم التسديد بنجاح");
             // Add afterSubmitfunction in props
-            //  handleReloadPage();
+            doAfterSubmit();
           } else {
             alert("error");
           }
@@ -127,6 +127,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             justifyContent="space-between"
           >
             <Box>
+              <Typography>{customer_id}</Typography>
               <Typography>
                 اجمالى فواتير العميل التى لم يتم سدادها:
                 <Typography variant="h6" color="error" component={"span"}>
@@ -215,7 +216,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                   type="submit"
                   variant="contained"
                   color="secondary"
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 >
                   حفظ
                 </Button>

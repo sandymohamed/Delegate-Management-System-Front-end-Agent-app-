@@ -42,7 +42,7 @@ const CreateCustomer: React.FC = () => {
   const {
     handleSubmit,
     reset,
-    formState: { isLoading },
+    formState: { isSubmitting },
   } = methods;
 
   const onSubmit = async (data: CreateCustomerFormData) => {
@@ -123,7 +123,7 @@ const CreateCustomer: React.FC = () => {
                     type="submit"
                     variant="contained"
                     color="secondary"
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   >
                     حفظ
                   </Button>

@@ -43,9 +43,11 @@ const CustomersList: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(100);
 
   // Dialog
-  const [open, setOpen] = React.useState(false);
-  const handleClickOpen = () => {
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const handleClickOpen = (id: number) => {
     setOpen(true);
+    setSelectedId(id);
   };
   const handleClose = () => {
     setOpen(false);
@@ -114,7 +116,16 @@ const CustomersList: React.FC = () => {
         </Stack>
 
         <Divider sx={{ my: 3 }} />
-
+        <SimpleDialog
+          open={open}
+          onClose={handleClose}
+          children={
+            <PaymentForm
+              customer_id={selectedId}
+              doAfterSubmit={handleReloadPage}
+            />
+          }
+        />
         <Grid2 container spacing={3}>
           <TableContainer component={Paper}>
             <Table stickyHeader aria-label="sticky table">
@@ -133,54 +144,49 @@ const CustomersList: React.FC = () => {
               <TableBody>
                 {TableData && TableData?.length
                   ? TableData?.map((row) => (
-                      <>
-                        <TableRow
-                          key={row.id}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                        >
-                          <TableBodyCell>{row?.name}</TableBodyCell>
-                          <TableBodyCell>
-                            {row?.customer_store_name}
-                          </TableBodyCell>
-                          <TableBodyCell>
-                            {row?.total_unpaid_invoices} ج
-                          </TableBodyCell>
-                          <TableBodyCell>{row?.phone}</TableBodyCell>
-                          <TableBodyCell>{row?.location}</TableBodyCell>
-                          <TableBodyCell>{row?.info}</TableBodyCell>
+                      <TableRow
+                        key={row.id}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableBodyCell>{row?.name}</TableBodyCell>
+                        <TableBodyCell>
+                          {row?.customer_store_name}
+                        </TableBodyCell>
+                        <TableBodyCell>
+                          {row?.total_unpaid_invoices} ج
+                        </TableBodyCell>
+                        <TableBodyCell>
+                          <a href={`tel:${row?.phone}`}>
+                            <Button variant="text">{row?.phone}</Button>
+                          </a>
+                        </TableBodyCell>
+                        <TableBodyCell>{row?.location}</TableBodyCell>
+                        <TableBodyCell>{row?.info}</TableBodyCell>
 
-                          <TableBodyCell>
-                            <Link
-                              component={RouterLink}
-                              to={`/customer-invoices/${row?.id}`}
-                            >
-                              تفاصيل
-                            </Link>
-                          </TableBodyCell>
+                        <TableBodyCell>
+                          <Button
+                            variant="text"
+                            component={RouterLink}
+                            to={`/customer-invoices/${row?.id}`}
+                          >
+                            تفاصيل
+                          </Button>
+                        </TableBodyCell>
 
-                          <TableBodyCell>
-                            <Button
-                              color="success"
-                              variant="text"
-                              onClick={handleClickOpen}
-                            >
-                              تسديد مبلغ لهذا العميل
-                            </Button>
-                          </TableBodyCell>
-                        </TableRow>
-                        <SimpleDialog
-                          open={open}
-                          onClose={handleClose}
-                          children={
-                            <PaymentForm
-                              customer_id={row?.id}
-                              doAfterSubmit={handleReloadPage}
-                            />
-                          }
-                        />
-                      </>
+                        <TableBodyCell>
+                          <Button
+                            color="success"
+                            variant="text"
+                            onClick={() => {
+                              handleClickOpen(row?.id);
+                            }}
+                          >
+                            تسديد مبلغ لهذا العميل
+                          </Button>
+                        </TableBodyCell>
+                      </TableRow>
                     ))
                   : null}
               </TableBody>

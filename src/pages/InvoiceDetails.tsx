@@ -19,13 +19,18 @@ import {
 } from "@mui/material";
 import Iconify from "../components/iconify/Iconify";
 import { getInvoiceById } from "../services/invoices.services";
-import { useAuth } from "../context/AuthContext";
 import { formatDate } from "../utils/dateFormatter";
-import { TableBodyCell, TableHeadCell, TableHeadRow } from "../components";
+import {
+  SimpleDialog,
+  TableBodyCell,
+  TableHeadCell,
+  TableHeadRow,
+} from "../components";
 import {
   TypeInvoiceDetails,
   TypeInvoiceProductsDetails,
 } from "../types/invoice";
+import AddReturnForm from "../components/AddReturnForm";
 
 // ----------------------------------------------------------------------
 
@@ -37,11 +42,24 @@ const InvoiceDetails: React.FC = () => {
   >(null);
   const { id } = useParams();
 
-  useEffect(() => {
+  // Dialog
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleReloadPage = () => {
     getInvoiceById(Number(id)).then((res) => {
       setInvoiceDetails(res);
       setInvoiceProductsDetails(res?.products);
     });
+  };
+
+  useEffect(() => {
+    handleReloadPage();
   }, [id]);
 
   return (
@@ -53,13 +71,32 @@ const InvoiceDetails: React.FC = () => {
             invoiceDetails?.invoice_date || ""
           )}`}
           action={
-            // TODO: add print button functionality6
-            <Button
-              variant="contained"
-              startIcon={<Iconify icon="mdi:printer" />}
-            >
-              طباعة الفاتورة
-            </Button>
+            // TODO: add print button functionality
+            <>
+              <Button
+                variant="outlined"
+                startIcon={<Iconify icon="mdi:printer" />}
+              >
+                طباعة الفاتورة
+              </Button>
+              <Button
+                component={RouterLink}
+                to={`/create-payment/${id}`}
+                variant="outlined"
+                color="success"
+                startIcon={<Iconify icon="tdesign:money" />}
+              >
+                تسديد مبلغ
+              </Button>
+              <Button
+                onClick={handleClickOpen}
+                variant="outlined"
+                color="secondary"
+                startIcon={<Iconify icon="mdi:cart-arrow-up" />}
+              >
+                تسجيل مرتجع
+              </Button>
+            </>
           }
         />
 
@@ -71,11 +108,22 @@ const InvoiceDetails: React.FC = () => {
             <strong>العنوان:</strong> {invoiceDetails?.customer_location}
           </Typography>
           <Typography variant="body1">
-            <strong>تاريخ استحقاق الفاتورة:</strong>{" "}
+            <strong>تاريخ استحقاق الفاتورة:</strong>
             {formatDate(invoiceDetails?.due_date || "")}
           </Typography>
         </Stack>
 
+        <SimpleDialog
+          open={open}
+          onClose={handleClose}
+          children={
+            <AddReturnForm
+              invoice={invoiceDetails}
+              invoice_id={invoiceDetails?.invoice_id || 0}
+              doAfterSubmit={handleReloadPage}
+            />
+          }
+        />
         <Divider sx={{ my: 3 }} />
 
         <TableContainer component={Paper}>
@@ -95,7 +143,7 @@ const InvoiceDetails: React.FC = () => {
                     <TableBodyCell>
                       <Link
                         component={RouterLink}
-                        to={`/invoice/${product.product_id}`}
+                        to={`#`}
                       >
                         {product.product_name}
                       </Link>
@@ -120,22 +168,43 @@ const InvoiceDetails: React.FC = () => {
               </Typography>
               <Stack spacing={1}>
                 <Typography variant="body1">
-                  <strong>السعر الكلى قبل التخفيض:</strong>{" "}
+                  <strong>السعر الكلى قبل التخفيض:</strong>
                   {invoiceDetails?.total_price} ج
                 </Typography>
                 <Typography variant="body1">
                   <strong>التخفيض:</strong> {invoiceDetails?.discount} ج
                 </Typography>
                 <Typography variant="body1">
-                  <strong>الاجمالى:</strong>{" "}
+                  <strong>الاجمالى:</strong>
                   {invoiceDetails?.total_after_discount} ج
                 </Typography>
                 <Typography variant="body1">
-                  <strong>تم الدفع بالكامل:</strong>{" "}
+                  <strong>تم الدفع بالكامل:</strong>
                   {invoiceDetails?.is_paid ? "نعم" : "لا"}
                 </Typography>
+
                 <Typography variant="body1">
-                  <strong>اجمالى ما تم دفعه:</strong>{" "}
+                  <strong>يوجد مرتجع؟ </strong>
+                  {invoiceDetails?.returns ? "نعم" : "لا"}
+                </Typography>
+                {invoiceDetails?.returns &&
+                  invoiceDetails?.returns.length &&
+                  invoiceDetails?.returned_amount && (
+                    <>
+                      <Typography variant="body1">
+                        <strong> قيمة المرتجع:</strong>
+                        {invoiceDetails?.returned_amount}
+                      </Typography>
+
+                      <Typography variant="body1">
+                        <strong> اجمالى بعد خصم المرتجع :</strong>
+                        {Number(invoiceDetails?.total_after_discount) -
+                          Number(invoiceDetails?.returned_amount)}
+                      </Typography>
+                    </>
+                  )}
+                <Typography variant="body1">
+                  <strong>اجمالى ما تم دفعه:</strong>
                   {invoiceDetails?.total_paid} ج
                 </Typography>
                 <Typography variant="body1">

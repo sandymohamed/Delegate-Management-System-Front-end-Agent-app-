@@ -124,7 +124,7 @@ const Dashboard: React.FC = () => {
               </Card>
             </Grid2>
 
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+            {/* <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
               <Card>
                 <Link
                   component={RouterLink}
@@ -147,7 +147,7 @@ const Dashboard: React.FC = () => {
                   </CardContent>
                 </Link>
               </Card>
-            </Grid2>
+            </Grid2> */}
 
             <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
               <Card>
@@ -199,7 +199,7 @@ const Dashboard: React.FC = () => {
               </Card>
             </Grid2>
 
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+            {/* <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
               <Card>
                 <Link
                   component={RouterLink}
@@ -222,7 +222,7 @@ const Dashboard: React.FC = () => {
                   </CardContent>
                 </Link>
               </Card>
-            </Grid2>
+            </Grid2> */}
           </Grid2>
         </Paper>
       </Box>

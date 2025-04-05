@@ -27,3 +27,22 @@ export type CreateProductFormData = {
   stock_quantity: number;
   exp_date?: string | null;
 };
+
+
+// returns:
+
+export interface AddReturnFormData {
+  products?: {
+    invoice_id?: number;
+    product_id: number | any;
+    return_quantity: number;
+    reason?: string;
+  }[];
+}
+
+export interface AddReturnSubmitFormData {
+  invoice_id?: number;
+  product_id: number;
+  return_quantity: number;
+  reason?: string;
+}

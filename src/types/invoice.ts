@@ -13,8 +13,9 @@ export type TypeInvoiceDetails = {
   customer_location: string;
   customer_total_unpaid_invoices: string;
 
+  invoice_id?: string | number;
   invoice_date: string;
-  due_date: string | null;
+  due_date: string ;
   total_price: string | number;
   discount: string | number;
   total_after_discount: string | number;
@@ -22,6 +23,8 @@ export type TypeInvoiceDetails = {
   total_paid: string | number;
   total_unpaid: string | number;
   products: TypeInvoiceProductsDetails[];
+  returned_amount: number | null;
+  returns: TypeInvoiceReturnProductsDetails[] | null;
 };
 
 export type TypeInvoiceProductsDetails = {
@@ -32,37 +35,46 @@ export type TypeInvoiceProductsDetails = {
   product_total_price: number;
 };
 
+export type TypeInvoiceReturnProductsDetails = {
+  product_id: number;
+  reason?: string;
+  return_amount: number;
+  return_quantity: number;
+  return_date: string;
+};
+
 export type TypeInvoiceDetailsResponse = {
   success: boolean;
   data: TypeInvoiceDetails[];
 };
 
-export type TypeInvoicesDetails = {
-  id: number;
-  store_id: number;
-  agent_id: number;
-  customer_id: number;
+export type TypeInvoicesDetails = TypeInvoiceDetails;
 
-  invoice_number: number | string;
-  invoice_date: string;
-  due_date: string;
-  total_price: number | string;
-  discount: number | string;
-  total_after_discount: number | string;
-  is_paid: boolean;
-  total_paid: number | string;
-  total_unpaid: number | string;
-  products: [
-    {
-      price: number;
-      quantity: number;
-      product_id: number;
-      product_total_price: number;
-    }
-  ];
-};
+// export type TypeInvoicesDetails = {
+//   id: number;
+//   store_id: number;
+//   agent_id: number;
+//   customer_id: number;
 
-
+//   invoice_number: number | string;
+//   invoice_date: string;
+//   due_date: string;
+//   total_price: number | string;
+//   discount: number | string;
+//   total_after_discount: number | string;
+//   is_paid: boolean;
+//   total_paid: number | string;
+//   total_unpaid: number | string;
+//   products: [
+//     {
+//       price: number;
+//       quantity: number;
+//       product_id: number;
+//       product_name: string;
+//       product_total_price: number;
+//     }
+//   ];
+// };
 
 export interface InvoiceProduct {
   product_id: number;

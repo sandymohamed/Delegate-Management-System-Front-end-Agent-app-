@@ -28,11 +28,11 @@ const LINKS: TypeLink[] = [
     path: "/products",
     icon: icons.files,
   },
-  {
-    title: "الموردين",
-    path: "/suppliers",
-    icon: icons.files,
-  },
+  // {
+  //   title: "الموردين",
+  //   path: "/suppliers",
+  //   icon: icons.files,
+  // },
   {
     title: "الفواتير",
     path: "/invoices",
