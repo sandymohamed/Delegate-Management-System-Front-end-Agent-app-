@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
+import { Box, CircularProgress, Container, Stack } from "@mui/material";
 
 // ------------------------------------------------------------
 type TypeProtectedRoute = {
@@ -18,7 +19,19 @@ const ProtectedRoute: React.FC<TypeProtectedRoute> = ({ children }) => {
   }, [token, user]);
 
   if (loading) {
-    return <div>Loading...</div>; //TODO: Add a more polished loading UI
+    return (
+      <Stack
+        sx={{
+          height: "100vh",
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        spacing={2}
+      >
+        <CircularProgress color="secondary" />
+      </Stack>
+    );
   }
 
   if (!token) {

@@ -18,10 +18,7 @@
 //         }
 //         setLoading(false);
 
-
 //     }, []);
-
-
 
 //     const login = async (userData) => {
 
@@ -32,8 +29,7 @@
 //         if (result.data.success) {
 //             setUser(result.data.data)
 //             setToken(result.data.payload)
-           
-            
+
 //             localStorage.setItem('token', result.data.payload)
 //             fetchUserData(result.data.payload);
 
@@ -60,7 +56,6 @@
 //         // localStorage.setItem('token', token);
 //     };
 
-
 //     // Logout function
 //     const logout = () => {
 //         localStorage.removeItem('token');
@@ -68,7 +63,6 @@
 //         setToken(null);
 //         // setUser(null);
 //     };
-
 
 //     // value object to be provided to consuming components
 
@@ -89,23 +83,21 @@
 //     return useContext(AuthContext);
 // }
 
-
-
-
 import axios from "axios";
 import { createContext, useContext, useState, useEffect } from "react";
-import { API_BASE_URL } from '../global-config';
-import { TypeUser } from "../types/user";
+import { API_BASE_URL } from "../global-config";
+import { TypeLogUser, TypeUser } from "../types/user";
+import { useAlert } from "./AlertProvider";
 // -----------------------------------------
 type TypeAuthProviderProps = {
-    children: React.ReactNode;
+  children: React.ReactNode;
 };
 // -----------------------------------------
 const AuthContext = createContext<{
   user: TypeUser | null;
   token: string | null;
   loading: boolean;
-  login: (userData: TypeUser) => Promise<void>;
+  login: (userData: TypeLogUser) => Promise<void>;
   logout: () => void;
   fetchUserData: () => Promise<void>;
 }>({
@@ -117,92 +109,96 @@ const AuthContext = createContext<{
   fetchUserData: async () => {},
 });
 export const AuthProvider: React.FC<TypeAuthProviderProps> = ({ children }) => {
-    const [user, setUser] = useState<TypeUser | null>(null);
-    const [token, setToken] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+  const { showAlert } = useAlert();
 
-    // Initialize auth state from local storage
-    useEffect(() => {
-        const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-            validateToken(storedToken);
-        } else {
-            setLoading(false); // No token, stop loading
-        }
-    }, []);
+  const [user, setUser] = useState<TypeUser | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-    const validateToken = async (token: string) => {
-        try {
-            const response = await axios.get(`${API_BASE_URL}/auth/account`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (response.data.success) {
-                setToken(token);
-                setUser(response.data.user);
-            } else {
-                logout(); // Token invalid or expired
-            }
-        } catch (error) {
-            console.error("Token validation failed:", error);
-            logout();
-        } finally {
-            setLoading(false);
-        }
-    };
+  // Initialize auth state from local storage
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      validateToken(storedToken);
+    } else {
+      setLoading(false); // No token, stop loading
+    }
+  }, []);
 
-    const login = async (userData: TypeUser) => {
-        try {
-            const result = await axios.post(`${API_BASE_URL}/auth/agent`, userData);
+  const validateToken = async (token: string) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/auth/account`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.data.success) {
+        setToken(token);
+        setUser(response.data.user);
+      } else {
+        logout(); // Token invalid or expired
+      }
+    } catch (error) {
+      console.error("Token validation failed:", error);
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            if (result.data.success) {
-                const { data: user, payload: token } = result.data;
-                setUser(user);
-                setToken(token);
-                localStorage.setItem('token', token);
-            } else {
-                throw new Error(result.data.error);
-            }
-        } catch (error: any) {
-            console.error("Login failed:", error);
-            alert(error?.message);
-            throw error;
-        }
-    };
+  const login = async (userData: TypeLogUser) => {
+    try {
+      const result = await axios.post(`${API_BASE_URL}/auth/agent`, userData);
 
-    const fetchUserData = async () => {
-        try {
-            const result = await axios.get(`${API_BASE_URL}/auth/account`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setUser(result.data.data);
-        } catch (error) {
-            console.error("Failed to fetch user data:", error);
-            logout();
-        }
-    };
+      if (result.data.success) {
+        const { data: user, payload: token } = result.data;
+        setUser(user);
+        setToken(token);
+        localStorage.setItem("token", token);
+      } else {
+        throw new Error(result.data.error);
+      }
+    } catch (error: any) {
+      showAlert(" حدث خطأ يرجى المحاولة مرة اخرى!" + `${error?.message}`, {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
+      throw error;
+    }
+  };
 
-    const logout = () => {
-        localStorage.removeItem('token');
-        setToken(null);
-        setUser(null);
-    };
+  const fetchUserData = async () => {
+    try {
+      const result = await axios.get(`${API_BASE_URL}/auth/account`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(result.data.data);
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+      logout();
+    }
+  };
 
-    const value = {
-        user,
-        token,
-        loading,
-        login,
-        logout,
-        fetchUserData,
-    };
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    setUser(null);
+  };
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  const value = {
+    user,
+    token,
+    loading,
+    login,
+    logout,
+    fetchUserData,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
-    const UserAuth = useContext(AuthContext)
-    if(!UserAuth){
-        throw new Error("useAuth must be used within a AuthProvider")
-    }
-    return UserAuth
+  const UserAuth = useContext(AuthContext);
+  if (!UserAuth) {
+    throw new Error("useAuth must be used within a AuthProvider");
+  }
+  return UserAuth;
 };

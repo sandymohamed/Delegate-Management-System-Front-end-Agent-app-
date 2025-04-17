@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink } from "react-router-dom";
 import * as Yup from "yup";
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -23,6 +24,7 @@ import FormTextField from "./FormTextField";
 import FormAutoComplete from "./FormAutoComplete";
 import { addNewReturns } from "../services/products.services";
 import { AddReturnFormData } from "../types/product";
+import { useAlert } from "../context/AlertProvider";
 
 interface AddReturnFormProps {
   invoice: TypeInvoiceDetails | null;
@@ -36,7 +38,8 @@ const AddReturnForm: React.FC<AddReturnFormProps> = ({
   invoice_id = null,
   doAfterSubmit = () => {},
 }) => {
-  
+  const { showAlert } = useAlert();
+
   // FORM
   const AddReturnFormSchema = Yup.object().shape({
     products: Yup.array().of(
@@ -88,8 +91,6 @@ const AddReturnForm: React.FC<AddReturnFormProps> = ({
   };
 
   const onSubmit = async (data: AddReturnFormData) => {
-    console.log("data", data);
-        
     try {
       if (invoice_id && data?.products?.length) {
         let formattedData = data.products.map((product) => ({
@@ -97,27 +98,31 @@ const AddReturnForm: React.FC<AddReturnFormProps> = ({
           product_id: product.product_id.product_id,
           invoice_id: Number(invoice_id),
         }));
-        
+
         await addNewReturns(formattedData).then(async (res) => {
-          // TODO handle after success
           if (res.success) {
-            alert("تمت بنجاح!");
             doAfterSubmit();
+             showAlert("تمت بنجاح!");
           } else {
-            alert("error");
+             showAlert(" حدث خطأ يرجى المحاولة مرة اخرى!" + `${res?.response?.data?.error}`, {
+              severity: "error",
+              autoHideDuration: 3000,
+            });
           }
         });
       }
     } catch (err) {
-      console.log(err);
-      alert("error");
+      showAlert(" حدث خطأ يرجى المحاولة مرة اخرى!" + `${err}`, {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 
   return (
     <Card>
       <CardHeader
-        title={ `ارجاع منتجات من  : ${invoice?.customer_name}`}
+        title={`ارجاع منتجات من  : ${invoice?.customer_name}`}
         subheader={
           <Stack
             direction="row"
@@ -141,13 +146,13 @@ const AddReturnForm: React.FC<AddReturnFormProps> = ({
               </Typography>
             </Box>
             <Box>
-                <Button
-                  variant="contained"
-                  component={RouterLink}
-                  to={`/invoice/${invoice_id}`}
-                >
-                  تفاصيل الفاتورة
-                </Button>
+              <Button
+                variant="contained"
+                component={RouterLink}
+                to={`/invoice/${invoice_id}`}
+              >
+                تفاصيل الفاتورة
+              </Button>
             </Box>
           </Stack>
         }
@@ -156,79 +161,79 @@ const AddReturnForm: React.FC<AddReturnFormProps> = ({
         <Paper sx={{ p: 2 }}>
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <Stack
-                  direction="column"
-                  spacing={0}
-                  alignItems="center"
-                  justifyContent="start"
-                >
-                  {fields?.map((field, index) => {
-                    return (
-                      <Box
-                        rowGap={3}
-                        columnGap={2}
-                        display="grid"
-                        gridTemplateColumns={{
-                          xs: "repeat(2, 1fr)",
-                          sm: "repeat(5, 1fr)",
-                        }}
-                        key={field.id}
-                        sx={{
-                          p: 2,
-                          mt: 2,
-                          borderRadius: 2,
-                          boxShadow: "1px 1px 1px 1px #eee",
-                          alignItems: "flex-end",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <FormAutoComplete
-                          name={`products.${index}.product_id`}
-                          control={control}
-                          label="المنتج"
-                          options={invoice?.products || [{}]}
-                          getOptionLabel={(
-                            option: TypeInvoiceProductsDetails
-                          ) => option.product_name || ""}
-                          isOptionEqualToValue={(
-                            option: TypeInvoiceProductsDetails,
-                            value: TypeInvoiceProductsDetails
-                          ) => option.product_id === value?.product_id}
-                        />
-                        <FormTextField
-                          name={`products.${index}.return_quantity`}
-                          control={control}
-                          label="الكمية"
-/>
-                        <FormTextField
-                          name={`products.${index}.reason`}
-                          control={control}
-                          label="سبب الاسترجاع"
-                        />
+              <Stack
+                direction="column"
+                spacing={0}
+                alignItems="center"
+                justifyContent="start"
+              >
+                {fields?.map((field, index) => {
+                  return (
+                    <Box
+                      rowGap={3}
+                      columnGap={2}
+                      display="grid"
+                      gridTemplateColumns={{
+                        xs: "repeat(2, 1fr)",
+                        sm: "repeat(5, 1fr)",
+                      }}
+                      key={field.id}
+                      sx={{
+                        p: 2,
+                        mt: 2,
+                        borderRadius: 2,
+                        boxShadow: "1px 1px 1px 1px #eee",
+                        alignItems: "flex-end",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <FormAutoComplete
+                        name={`products.${index}.product_id`}
+                        control={control}
+                        label="المنتج"
+                        options={invoice?.products || [{}]}
+                        getOptionLabel={(option: TypeInvoiceProductsDetails) =>
+                          option.product_name || ""
+                        }
+                        isOptionEqualToValue={(
+                          option: TypeInvoiceProductsDetails,
+                          value: TypeInvoiceProductsDetails
+                        ) => option.product_id === value?.product_id}
+                      />
+                      <FormTextField
+                        name={`products.${index}.return_quantity`}
+                        control={control}
+                        label="الكمية"
+                      />
+                      <FormTextField
+                        name={`products.${index}.reason`}
+                        control={control}
+                        label="سبب الاسترجاع"
+                      />
 
-                        <Box>
+                      <Box>
+                        <Button
+                          type="button"
+                          variant="text"
+                          onClick={() => handleAddProduct()}
+                        >
+                          اضافة منتج اخر
+                        </Button>
+                        {index > 0 && (
                           <Button
                             type="button"
                             variant="text"
-                            onClick={() => handleAddProduct()}
+                            color="error"
+                            onClick={() => handleRemoveProduct(index)}
                           >
-                            اضافة منتج اخر
+                            حذف هذا المنتج
                           </Button>
-                          {index > 0 && (
-                            <Button
-                              type="button"
-                              variant="text"
-                              color="error"
-                              onClick={() => handleRemoveProduct(index)}
-                            >
-                              حذف هذا المنتج
-                            </Button>
-                          )}
-                        </Box>
+                        )}
                       </Box>
-                    );
-                  })}
-                </Stack>
+                    </Box>
+                  );
+                })}
+              </Stack>
               <Box
                 display="flex"
                 justifyContent="flex-end"

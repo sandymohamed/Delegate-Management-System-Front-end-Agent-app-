@@ -17,14 +17,19 @@ import {
   TableRow,
   TextField,
   Typography,
-  Paper
+  Paper,
 } from "@mui/material";
-import { VanProduct } from "../types/Van";
+import { Van, VanProduct } from "../types/Van";
 import Iconify, { icons } from "../components/iconify";
 import { TableBodyCell, TableHeadCell, TableHeadRow } from "../components";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 // --------------------------------------
 const VanTrack: React.FC = () => {
+  const vanDetails: Van | null = useSelector(
+    (state: RootState) => state.van.vanDetails
+  );
   const [vanData, setVanData] = useState<VanProduct[] | null>(null);
   const [filterdVanData, setFilterdVanData] = useState<VanProduct[] | null>(
     null
@@ -40,14 +45,13 @@ const VanTrack: React.FC = () => {
   };
 
   useEffect(() => {
-    // TODO: add id dynamically
-    getVanProducts(6).then((res) => {
+    getVanProducts(vanDetails?.id).then((res) => {
       if (res && res.length) {
         setVanData(res);
         setFilterdVanData(res);
       }
     });
-  }, [setVanData]);
+  }, [setVanData, vanDetails]);
 
   return (
     <Container>
@@ -124,13 +128,11 @@ const VanTrack: React.FC = () => {
                 <TableBody>
                   {filterdVanData?.map((product) => (
                     <TableRow
-                    hover={true}
+                      hover={true}
                       key={product.product_id}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
-                      <TableBodyCell >
-                        {product.product_name}
-                      </TableBodyCell>
+                      <TableBodyCell>{product.product_name}</TableBodyCell>
                       <TableBodyCell>{product.price} ج </TableBodyCell>
                       <TableBodyCell>{product.total_quantity}</TableBodyCell>
                     </TableRow>

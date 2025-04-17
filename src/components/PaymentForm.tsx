@@ -26,6 +26,7 @@ import {
   addPaymentForCustomer,
 } from "../services/invoices.services";
 import { useAuth } from "../context/AuthContext";
+import { useAlert } from "../context/AlertProvider";
 
 interface PaymentFormProps {
   invoice?: TypeInvoiceDetails | null;
@@ -41,15 +42,14 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   doAfterSubmit = () => {},
 }) => {
   const { user } = useAuth();
+  const { showAlert } = useAlert();
 
   // FORM
   const AddPaymentSchema = Yup.object().shape({
-    // invoice_id: Yup.string(),
     amount: Yup.string().required("يجب عليك ادخال المبلغ المدفوع"),
     date: Yup.string(),
   });
   const defaultValues: AddPaymentFormData = {
-    // invoice_id: '',
     amount: "",
     date: "",
   };
@@ -65,7 +65,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   } = methods;
 
   const onSubmit = async (data: AddPaymentFormData) => {
-    console.log("data", data);
 
     let formattedData: TypePaymentSubmitData | TypePaymentFOrCustomerSubmitData;
 
@@ -78,13 +77,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         };
 
         await addPayment(formattedData).then(async (res) => {
-          // TODO handle after success
           if (res.success) {
-            alert("تم التسديد بنجاح");
-            // Add afterSubmitfunction in props
             doAfterSubmit();
+             showAlert("تم التسديد بنجاح");
           } else {
-            alert("error");
+            showAlert(
+              " حدث خطأ يرجى المحاولة مرة اخرى!" +
+                `${res?.response?.data?.error}`,
+              {
+                severity: "error",
+                autoHideDuration: 3000,
+              }
+            );
           }
         });
       } else if (customer_id && user) {
@@ -95,19 +99,30 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         };
 
         await addPaymentForCustomer(formattedData).then(async (res) => {
-          // TODO handle after success
           if (res.success) {
-            alert("تم التسديد بنجاح");
-            // Add afterSubmitfunction in props
-             doAfterSubmit();
+            showAlert("تم التسديد بنجاح");
+            doAfterSubmit();
           } else {
-            alert("error");
+            showAlert(
+              " حدث خطأ يرجى المحاولة مرة اخرى!" +
+                `${res?.response?.data?.error}`,
+              {
+                severity: "error",
+                autoHideDuration: 3000,
+              }
+            );
           }
         });
       }
     } catch (err) {
-      console.log(err);
-      alert("error");
+      showAlert(
+        " حدث خطأ يرجى المحاولة مرة اخرى!" +
+          `${err}`,
+        {
+          severity: "error",
+          autoHideDuration: 3000,
+        }
+      );
     }
   };
 

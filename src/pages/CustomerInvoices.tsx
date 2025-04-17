@@ -41,14 +41,14 @@ const CustomerInvoices: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(100);
 
   useEffect(() => {
-    getAllInvoicesForCustomer(id, rowsPerPage, page + 1).then((res) => {
+    getAllInvoicesForCustomer(Number(id), rowsPerPage, page + 1).then((res) => {
       console.log(res);
 
       setTableData(res?.data);
       setTotalDataLength(res?.total);
     });
 
-    getCustomerById(id).then((res) => {
+    getCustomerById(Number(id)).then((res) => {
       console.log(res);
       setCustomer(res);
     });

@@ -29,6 +29,7 @@ export default function ThemeCustomization({ children }) {
 
   let themeDefault = createTheme({
     direction: "rtl",
+    spacing: 4, // Change from default 8 to 4 (halves the spacing)
     breakpoints: {
       values: {
         xs: 0,

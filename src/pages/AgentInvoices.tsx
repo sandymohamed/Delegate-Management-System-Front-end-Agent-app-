@@ -187,7 +187,6 @@ const AgentInvoices: React.FC = () => {
                         </TableBodyCell>
                         <TableBodyCell>{row.total_paid}</TableBodyCell>
                         <TableBodyCell>{row.total_unpaid}</TableBodyCell>
-                        {/* TODO : enhance products show */}
 
                         <TableBodyCell>
                           <TableBodyCell>

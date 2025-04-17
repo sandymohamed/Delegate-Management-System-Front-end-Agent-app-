@@ -14,11 +14,14 @@ import * as Yup from "yup";
 import { addNewCustomer } from "../services/customers.services";
 import { FormTextField } from "../components";
 import { CreateCustomerFormData } from "../types/customers";
+import { useAlert } from "../context/AlertProvider";
 // -------------------------------------------------------
 const CreateCustomer: React.FC = () => {
+  const { showAlert } = useAlert();
+
   const CreateCustomerSchema = Yup.object().shape({
-    name: Yup.string().required('اسم العميل مطلوب'),
-    customer_store_name: Yup.string().required('اسم المحل مطلوب'),
+    name: Yup.string().required("اسم العميل مطلوب"),
+    customer_store_name: Yup.string().required("اسم المحل مطلوب"),
     email: Yup.string().email("يجب ان يكون الايميل صحيح"),
     phone: Yup.string(),
     info: Yup.string(),
@@ -46,16 +49,16 @@ const CreateCustomer: React.FC = () => {
   } = methods;
 
   const onSubmit = async (data: CreateCustomerFormData) => {
-    console.log("data", data);
-
     try {
       await addNewCustomer(data).then(() => {
-        alert("تم اضافة العميل بنجاح");
+        showAlert("تم اضافة العميل بنجاح");
         reset();
       });
     } catch (err) {
-      console.log(err);
-      alert("error");
+      showAlert(" حدث خطأ يرجى المحاولة مرة اخرى!" + `${err}`, {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 

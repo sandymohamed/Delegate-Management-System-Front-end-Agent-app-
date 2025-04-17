@@ -18,7 +18,12 @@ import {
   Typography,
 } from "@mui/material";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
-import { FormAutoComplete, FormDatePicker, FormTextField, SimpleDialog } from "../components";
+import {
+  FormAutoComplete,
+  FormDatePicker,
+  FormTextField,
+  SimpleDialog,
+} from "../components";
 import { fetchProducts } from "../redux/slices/productsSlice";
 import { createNewInvoice } from "../services/invoices.services";
 import { getAllCustomers } from "../services/customers.services";
@@ -28,11 +33,15 @@ import { AppDispatch, RootState } from "../redux/store";
 import { Van, VanProduct } from "../types/Van";
 import { InvoiceFormData, InvoiceProduct } from "../types/invoice";
 import CreateCustomer from "./CreateCustomer";
+import { useAlert } from "../context/AlertProvider";
 
 // -----------------------------------------------------------
 const CreateInvoice: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+
+  const { showAlert } = useAlert();
+
   const vanProducts: VanProduct[] = useSelector(
     (state: RootState) => state.products.vanProducts
   );
@@ -40,23 +49,20 @@ const CreateInvoice: React.FC = () => {
     (state: RootState) => state.van.vanDetails
   );
 
-  
-    // Dialog
-    const [open, setOpen] = useState(false);
-    const handleClickOpen = () => {
-      setOpen(true);
-    };
-    const handleClose = () => {
-      setOpen(false);
-    };
-
+  // Dialog
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    handleGetAllCustomers();
+    setOpen(false);
+  };
 
   const [customers, setCustomers] = useState<TypeCustomer[]>([]);
   const [selectedProductsDetails, setSelectedProductsDetails] = useState<
     VanProduct[] | null
   >(null);
-
-  // const { user } = useAuth();
 
   const createInvoiceSchema = Yup.object().shape({
     customer_id: Yup.mixed().required("العميل مطلوب"),
@@ -114,8 +120,6 @@ const CreateInvoice: React.FC = () => {
         (products: any) =>
           products!.every(
             (product: any) => product.product_id && product.quantity > 0
-            // &&
-            // Number(product?.price) > 0
           )
       ),
   });
@@ -134,7 +138,6 @@ const CreateInvoice: React.FC = () => {
     van_id: vanDetails?.id,
   };
 
-  // TODO: enhance this type
   const methods = useForm<InvoiceFormData | any>({
     resolver: yupResolver(createInvoiceSchema),
     defaultValues,
@@ -165,20 +168,17 @@ const CreateInvoice: React.FC = () => {
     remove(index);
   };
 
-  useEffect(() => {
+  const handleGetAllCustomers = () => {
     getAllCustomers().then((res) => {
       if (res && res.data.length) setCustomers(res.data);
     });
+  };
+
+  useEffect(() => {
+    handleGetAllCustomers();
 
     dispatch(fetchProducts(vanDetails.id));
   }, [dispatch, vanDetails]);
-
-  // useEffect(() => {
-
-  //     // TODO: handle van in redux
-  //     dispatch(fetchVan(user?.id));
-
-  // }, [dispatch,user?.id]);
 
   useEffect(() => {
     setSelectedProductsDetails(
@@ -215,27 +215,27 @@ const CreateInvoice: React.FC = () => {
     try {
       const res = await createNewInvoice(formattedData);
       if (res.success) {
-        alert(res?.message);
+        showAlert("تمت بنجاح!" + res?.message);
+
         navigate("/create-payment/" + res?.invoice_id);
       }
     } catch (err) {
-      console.error(err);
-      alert("error");
+      showAlert(" حدث خطأ يرجى المحاولة مرة اخرى!" + `${err}`, {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 
   return (
     <Container>
-
       <Typography variant="h4">انشاء فاتورة جديدة</Typography>
-      
-              <SimpleDialog
-                open={open}
-                onClose={handleClose}
-                children={
-                  <CreateCustomer/>
-                }
-              />
+
+      <SimpleDialog
+        open={open}
+        onClose={handleClose}
+        children={<CreateCustomer />}
+      />
       <Grid2 container spacing={2}>
         <Grid2 size={{ xs: 12, sm: 9 }}>
           <Paper sx={{ p: 2 }}>
@@ -273,22 +273,12 @@ const CreateInvoice: React.FC = () => {
                         mt: 2,
                       }}
                     >
-                      {/* TODO: add customer modal */}
-                      <Button
-                        variant="outlined"
-                        color="info"
-                        component={RouterLink}
-                        to={`/create-customer`}
-                      >
-                        اضافة عميل؟
-                      </Button>
                       <Button
                         variant="outlined"
                         color="info"
                         onClick={handleClickOpen}
-
                       >
-                    vv    اضافة عميل؟
+                        اضافة عميل؟
                       </Button>
                     </Box>
                   </>

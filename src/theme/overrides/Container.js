@@ -6,13 +6,16 @@ export default function Container() {
       styleOverrides: {
         root: {
           '&.MuiContainer-maxWidthXl': {
-            maxWidth: 1266
+            maxWidth: 1400
           },
           '&.MuiContainer-maxWidthLg': {
-            maxWidth: 1128
+            maxWidth: 1400
           }
         }
       }
     }
   };
 }
+
+
+

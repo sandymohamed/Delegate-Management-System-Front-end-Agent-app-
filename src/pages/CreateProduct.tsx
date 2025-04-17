@@ -15,8 +15,11 @@ import { FormDatePicker, FormTextField } from "../components";
 import { CreateProductFormData } from "../types/product";
 import { addNewProduct } from "../services/products.services";
 import { formatDate } from "../utils/dateFormatter";
+import { useAlert } from "../context/AlertProvider";
 // -------------------------------------------------------
 const CreateProduct: React.FC = () => {
+  const { showAlert } = useAlert();
+
   const CreateProductSchema = Yup.object().shape({
     name: Yup.string().required("اسم المنتج مطلوب"),
     price: Yup.number().required("سعر المنتج مطلوب"),
@@ -54,12 +57,14 @@ const CreateProduct: React.FC = () => {
     }
     try {
       await addNewProduct(data).then(() => {
-        alert("تم اضافة المنتج بنجاح");
+        showAlert("تم اضافة المنتج بنجاح");
         reset();
       });
     } catch (err) {
-      console.log(err);
-      alert("error");
+      showAlert(" حدث خطأ يرجى المحاولة مرة اخرى!" + `${err}`, {
+        severity: "error",
+        autoHideDuration: 3000,
+      });
     }
   };
 

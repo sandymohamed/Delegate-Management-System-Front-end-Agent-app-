@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import {
-  Box,
-  Button,
   Card,
-  CardContent,
-  CardHeader,
   Container,
   Divider,
   Paper,
@@ -18,11 +12,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { FormProvider, useForm } from "react-hook-form";
-import { useParams, Link as RouterLink } from "react-router-dom";
+import { useParams, } from "react-router-dom";
 import {
-  FormDatePicker,
-  FormTextField,
   PaymentForm,
   TableBodyCell,
   TableHeadCell,
@@ -30,16 +21,13 @@ import {
 } from "../components";
 import { useAuth } from "../context/AuthContext";
 import {
-  addPayment,
   getInvoiceById,
   getPaymentById,
 } from "../services/invoices.services";
 import { formatDate } from "../utils/dateFormatter";
 import { TypeInvoiceDetails } from "../types/invoice";
 import {
-  AddPaymentFormData,
   TypePayment,
-  TypePaymentSubmitData,
 } from "../types/payment";
 // -------------------------------------------------------
 const AddPayment: React.FC = () => {
@@ -68,36 +56,6 @@ const AddPayment: React.FC = () => {
     handleReloadPage();
   }, []);
 
-  // const onSubmit = async (data: AddPaymentFormData) => {
-  //   console.log("data", data);
-  //   // data.user_id = user.id;
-  //   // data.invoice_id = invoice_id;
-
-  //   let formattedData: TypePaymentSubmitData;
-
-  //   if (invoice_id && user) {
-  //     formattedData = {
-  //       ...data,
-  //       invoice_id,
-  //       user_id: user.id,
-  //     };
-
-  //     try {
-  //       await addPayment(formattedData).then(async (res) => {
-  //         // TODO handle after success
-  //         if (res.success) {
-  //           alert("تم التسديد بنجاح");
-  //           handleReloadPage();
-  //         } else {
-  //           alert("error");
-  //         }
-  //       });
-  //     } catch (err) {
-  //       console.log(err);
-  //       alert("error");
-  //     }
-  //   }
-  // };
 
   return (
     <Container>
