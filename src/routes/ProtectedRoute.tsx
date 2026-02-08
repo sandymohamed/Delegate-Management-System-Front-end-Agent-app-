@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
-import { Box, CircularProgress, Container, Stack } from "@mui/material";
+import { CircularProgress,  Stack } from "@mui/material";
 
 // ------------------------------------------------------------
 type TypeProtectedRoute = {

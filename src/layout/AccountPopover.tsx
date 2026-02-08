@@ -18,7 +18,6 @@ import { useAlert } from "../context/AlertProvider";
 // components
 // import { CustomAvatar } from "../components/index";
 
-
 // ----------------------------------------------------------------------
 
 const OPTIONS = [
@@ -59,7 +58,7 @@ const AccountPopover: React.FC = () => {
       handleClosePopover();
     } catch (error) {
       console.error(error);
-      showAlert(" حدث خطأ يرجى المحاولة مرة اخرى!" , {
+      showAlert(" حدث خطأ يرجى المحاولة مرة اخرى!", {
         severity: "error",
         autoHideDuration: 3000,
       });

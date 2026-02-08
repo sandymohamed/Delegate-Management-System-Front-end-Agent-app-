@@ -87,7 +87,6 @@ import axios from "axios";
 import { createContext, useContext, useState, useEffect } from "react";
 import { API_BASE_URL } from "../global-config";
 import { TypeLogUser, TypeUser } from "../types/user";
-import { useAlert } from "./AlertProvider";
 // -----------------------------------------
 type TypeAuthProviderProps = {
   children: React.ReactNode;
@@ -109,7 +108,6 @@ const AuthContext = createContext<{
   fetchUserData: async () => {},
 });
 export const AuthProvider: React.FC<TypeAuthProviderProps> = ({ children }) => {
-  const { showAlert } = useAlert();
 
   const [user, setUser] = useState<TypeUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -157,11 +155,7 @@ export const AuthProvider: React.FC<TypeAuthProviderProps> = ({ children }) => {
         throw new Error(result.data.error);
       }
     } catch (error: any) {
-      showAlert(" حدث خطأ يرجى المحاولة مرة اخرى!" + `${error?.message}`, {
-        severity: "error",
-        autoHideDuration: 3000,
-      });
-      throw error;
+      throw error?.response?.data?.error || error?.message;
     }
   };
 
