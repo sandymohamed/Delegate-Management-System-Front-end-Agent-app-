@@ -194,9 +194,9 @@ const InvoiceDetails: React.FC = () => {
                 <TableHeadRow>
                   <TableHeadCell>#</TableHeadCell>
                   <TableHeadCell>اسم المنتج</TableHeadCell>
-                  <TableHeadCell align="center">الكمية</TableHeadCell>
-                  <TableHeadCell align="right">السعر ({CURRENCY})</TableHeadCell>
-                  <TableHeadCell align="right">الإجمالي ({CURRENCY})</TableHeadCell>
+                  <TableHeadCell >الكمية</TableHeadCell>
+                  <TableHeadCell >السعر ({CURRENCY})</TableHeadCell>
+                  <TableHeadCell >الإجمالي ({CURRENCY})</TableHeadCell>
                 </TableHeadRow>
               </TableHead>
               <TableBody>
