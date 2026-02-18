@@ -15,3 +15,42 @@ code {
 /* label{
   left: 20% !important;
 } */
+
+/* ============== Print: Invoice ============== */
+@media print {
+  /* Hide everything except the invoice document */
+  body * {
+    visibility: hidden;
+  }
+
+  .invoice-print-area,
+  .invoice-print-area * {
+    visibility: visible;
+  }
+
+  .invoice-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ensure invoice header and content print with correct colors */
+  .invoice-print-area [class*="MuiBox-root"] {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}
