@@ -3,6 +3,7 @@ import { Link as RouterLink } from "react-router-dom";
 import {
   Button,
   Chip,
+  Collapse,
   Container,
   Divider,
   Grid2,
@@ -23,7 +24,10 @@ import {
 } from "@mui/material";
 import Iconify from "../components/iconify/Iconify";
 import { icons } from "../components/iconify/IconRegistry";
-import { getAllInvoices } from "../services/invoices.services";
+import {
+  AgentInvoicesFilters,
+  getAllInvoices,
+} from "../services/invoices.services";
 import { useAuth } from "../context/AuthContext";
 import { formatDate } from "../utils/dateFormatter";
 import {
@@ -36,12 +40,31 @@ import { TypeInvoicesDetails } from "../types/invoice";
 import AddReturnForm from "../components/AddReturnForm";
 
 // ----------------------------------------------------------------------
+const initialFilters: AgentInvoicesFilters = {
+  lateStatus: "",
+  isPaid: "",
+  dueDateFrom: "",
+  dueDateTo: "",
+  invoiceDateFrom: "",
+  invoiceDateTo: "",
+  totalPriceMin: "",
+  totalPriceMax: "",
+  totalPaidMin: "",
+  totalPaidMax: "",
+  totalUnpaidMin: "",
+  totalUnpaidMax: "",
+  customerName: "",
+  customerLocation: "",
+};
+
 const AgentInvoices: React.FC = () => {
   const [totalDataLength, setTotalDataLength] = useState<number>(0);
   const [TableData, setTableData] = useState<TypeInvoicesDetails[] | null>(
     null
   );
-  const [searchTerm, setSearchTerm] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [filters, setFilters] = useState<AgentInvoicesFilters>(initialFilters);
+  const [showFilters, setShowFilters] = useState(false);
 
   const { user } = useAuth();
 
@@ -62,7 +85,7 @@ const AgentInvoices: React.FC = () => {
   };
 
   const handleReloadPage = () => {
-    getAllInvoices(user?.id || 0, searchTerm, rowsPerPage, page + 1).then(
+    getAllInvoices(user?.id || 0, searchTerm, rowsPerPage, page + 1, filters).then(
       (res) => {
         setTableData(res?.data);
         setTotalDataLength(res?.total);
@@ -71,13 +94,25 @@ const AgentInvoices: React.FC = () => {
   };
 
   useEffect(() => {
-    getAllInvoices(user?.id || 0, searchTerm, rowsPerPage, page + 1).then(
+    if (!user?.id) return;
+    getAllInvoices(user.id, searchTerm, rowsPerPage, page + 1, filters).then(
       (res) => {
         setTableData(res?.data);
         setTotalDataLength(res?.total);
       }
     );
-  }, [searchTerm, rowsPerPage, page]);
+  }, [user?.id, searchTerm, rowsPerPage, page, filters]);
+
+  const handleFilterChange = (key: keyof AgentInvoicesFilters, value: string) => {
+    setPage(0);
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setPage(0);
+    setFilters(initialFilters);
+  };
 
   return (
     <Container>
@@ -91,30 +126,237 @@ const AgentInvoices: React.FC = () => {
           spacing={2}
           alignItems="center"
           justifyContent="space-between"
+          flexWrap="wrap"
         >
           <Typography gutterBottom>عدد الفواتير : {totalDataLength}</Typography>
-          {/* TODO : add filter by:
-          date
-          is paid
-          is not paid
-          client name
-          */}
-          <TextField
-            id="input-with-icon-textfield"
-            variant="outlined"
-            label="بحث"
-            onChange={(e) => setSearchTerm(e.target.value)}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Iconify icon={icons.search} width={24} />
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
+          <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
+            <TextField
+              id="input-with-icon-textfield"
+              variant="outlined"
+              label="بحث"
+              value={searchTerm}
+              onChange={(e) => {
+                setPage(0);
+                setSearchTerm(e.target.value);
+              }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Iconify icon={icons.search} width={24} />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <Button
+              variant={showFilters ? "contained" : "outlined"}
+              onClick={() => setShowFilters((prev) => !prev)}
+              startIcon={
+                <Iconify icon={showFilters ? "eva:eye-off-fill" : "eva:funnel-fill"} />
+              }
+            >
+              {showFilters ? "إخفاء الفلاتر" : "إظهار الفلاتر"}
+            </Button>
+          </Stack>
         </Stack>
+
+        <Collapse in={showFilters}>
+          <Paper variant="outlined" sx={{ mt: 2, p: 2, borderRadius: 2 }}>
+            <Stack spacing={2}>
+              <Typography variant="h6">الفلاتر المتقدمة</Typography>
+
+              <Grid2 container spacing={2}>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <Select
+                    fullWidth
+                    displayEmpty
+                    value={filters.lateStatus ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("lateStatus", String(e.target.value))
+                    }
+                  >
+                    <MenuItem value="">حالة التأخير (الكل)</MenuItem>
+                    <MenuItem value="late">متأخر</MenuItem>
+                    <MenuItem value="not_late">غير متأخر</MenuItem>
+                  </Select>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <Select
+                    fullWidth
+                    displayEmpty
+                    value={filters.isPaid ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("isPaid", String(e.target.value))
+                    }
+                  >
+                    <MenuItem value="">حالة الدفع (الكل)</MenuItem>
+                    <MenuItem value="true">مدفوع</MenuItem>
+                    <MenuItem value="false">غير مدفوع</MenuItem>
+                  </Select>
+                </Grid2>
+              </Grid2>
+
+              <Grid2 container spacing={2}>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="اسم العميل"
+                    value={filters.customerName ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("customerName", e.target.value)
+                    }
+                  />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="منطقة العميل"
+                    value={filters.customerLocation ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("customerLocation", e.target.value)
+                    }
+                  />
+                </Grid2>
+              </Grid2>
+
+              <Grid2 container spacing={2}>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="تاريخ الاستحقاق من"
+                    type="date"
+                    value={filters.dueDateFrom ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("dueDateFrom", e.target.value)
+                    }
+                    slotProps={{ inputLabel: { shrink: true } }}
+                  />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="تاريخ الاستحقاق إلى"
+                    type="date"
+                    value={filters.dueDateTo ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("dueDateTo", e.target.value)
+                    }
+                    slotProps={{ inputLabel: { shrink: true } }}
+                  />
+                </Grid2>
+              </Grid2>
+
+              <Grid2 container spacing={2}>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="تاريخ الفاتورة من"
+                    type="date"
+                    value={filters.invoiceDateFrom ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("invoiceDateFrom", e.target.value)
+                    }
+                    slotProps={{ inputLabel: { shrink: true } }}
+                  />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="تاريخ الفاتورة إلى"
+                    type="date"
+                    value={filters.invoiceDateTo ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("invoiceDateTo", e.target.value)
+                    }
+                    slotProps={{ inputLabel: { shrink: true } }}
+                  />
+                </Grid2>
+              </Grid2>
+
+              <Grid2 container spacing={2}>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="إجمالي السعر من"
+                    value={filters.totalPriceMin ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("totalPriceMin", e.target.value)
+                    }
+                  />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="إجمالي السعر إلى"
+                    value={filters.totalPriceMax ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("totalPriceMax", e.target.value)
+                    }
+                  />
+                </Grid2>
+              </Grid2>
+
+              <Grid2 container spacing={2}>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="المدفوع من"
+                    value={filters.totalPaidMin ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("totalPaidMin", e.target.value)
+                    }
+                  />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="المدفوع إلى"
+                    value={filters.totalPaidMax ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("totalPaidMax", e.target.value)
+                    }
+                  />
+                </Grid2>
+              </Grid2>
+
+              <Grid2 container spacing={2}>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="غير المدفوع من"
+                    value={filters.totalUnpaidMin ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("totalUnpaidMin", e.target.value)
+                    }
+                  />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="غير المدفوع إلى"
+                    value={filters.totalUnpaidMax ?? ""}
+                    onChange={(e) =>
+                      handleFilterChange("totalUnpaidMax", e.target.value)
+                    }
+                  />
+                </Grid2>
+              </Grid2>
+
+              <Stack direction="row" justifyContent="flex-end">
+                <Button variant="outlined" onClick={handleResetFilters}>
+                  إعادة تعيين الفلاتر
+                </Button>
+              </Stack>
+            </Stack>
+          </Paper>
+        </Collapse>
 
         <Divider sx={{ my: 3 }} />
         <SimpleDialog
@@ -146,15 +388,13 @@ const AgentInvoices: React.FC = () => {
                     <TableHeadCell>تم الدفع بالكامل؟</TableHeadCell>
                     <TableHeadCell>اجمالى ما تم دفعه</TableHeadCell>
                     <TableHeadCell>اجمالى ما لم يتم دفعه</TableHeadCell>
-                    {/* TODO: enhance title */}
                     <TableHeadCell> تسديد مبلغ </TableHeadCell>
                     <TableHeadCell> تسجيل مرتجع </TableHeadCell>
                     <TableHeadCell> التفاصيل </TableHeadCell>
                   </TableHeadRow>
                 </TableHead>
                 <TableBody>
-                  {TableData &&
-                    TableData?.length &&
+                  {(TableData && TableData?.length ) &&
                     TableData?.map((row) => (
                       <TableRow
                         key={row.id}
@@ -241,7 +481,6 @@ const AgentInvoices: React.FC = () => {
                 alignItems="center"
                 justifyContent="space-between"
               >
-                {/* dropdown for page size */}
                 <Typography gutterBottom>
                   عدد الفواتير فى الصفحة : {rowsPerPage || 0}
                 </Typography>

@@ -65,4 +65,14 @@ export const icons = {
     qrCode: "ri:qr-scan-line",
     box: "mingcute:empty-box-line",
 
+    // Dashboard
+    dashboard: "solar:home-2-bold-duotone",
+    chart: "tabler:chart-bar",
+    wallet: "solar:wallet-money-bold-duotone",
+    customers: "solar:users-group-rounded-bold-duotone",
+    products: "solar:box-bold-duotone",
+    add: "solar:add-circle-bold",
+    list: "solar:list-bold-duotone",
+    track: "solar:map-point-wave-bold-duotone",
+    payment: "mdi:cash-multiple",
 };

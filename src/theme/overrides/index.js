@@ -5,6 +5,7 @@ import { merge } from 'lodash-es';
 import Accordion from './Accordion';
 import AccordionSummary from './AccordionSummary';
 import Button from './Button';
+import Card from './Card';
 import Chip from './Chip';
 import Container from './Container';
 import IconButton from './IconButton';
@@ -20,6 +21,7 @@ export default function ComponentsOverrides(theme) {
     Accordion(),
     AccordionSummary(),
     Button(theme),
+    Card(theme),
     Chip(),
     Container(),
     IconButton(theme),

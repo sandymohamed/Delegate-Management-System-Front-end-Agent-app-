@@ -2,14 +2,49 @@ import { InvoiceFormData } from "../types/invoice";
 import { TypePaymentFOrCustomerSubmitData, TypePaymentSubmitData } from "../types/payment";
 import axiosInstance from "../utils/axiosInstance";
 
+export type AgentInvoicesFilters = {
+  lateStatus?: "late" | "not_late" | "";
+  isPaid?: "true" | "false" | "";
+  dueDateFrom?: string;
+  dueDateTo?: string;
+  invoiceDateFrom?: string;
+  invoiceDateTo?: string;
+  totalPriceMin?: string;
+  totalPriceMax?: string;
+  totalPaidMin?: string;
+  totalPaidMax?: string;
+  totalUnpaidMin?: string;
+  totalUnpaidMax?: string;
+  customerName?: string;
+  customerLocation?: string;
+};
+
 export const getAllInvoices = async (
   id: number,
   searchTerm?: string | null,
   limit?: number,
-  page?: number
+  page?: number,
+  filters?: AgentInvoicesFilters
 ) => {
+  const params: Record<string, string | number> = {
+    limit: limit ?? 100,
+    page: page ?? 1,
+  };
+
+  if (searchTerm) {
+    params.searchTerm = searchTerm;
+  }
+
+  if (filters) {
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params[key] = value;
+      }
+    });
+  }
+
   const response = await axiosInstance
-    .post(`/invoices/agent/${id}`, { searchTerm, limit, page })
+    .get(`/invoices/agent/${id}`, { params })
     .then((res) => res?.data?.result)
     .catch((err) => err);
 

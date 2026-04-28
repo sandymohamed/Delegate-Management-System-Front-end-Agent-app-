@@ -50,46 +50,52 @@
 
 
 export default function palette(mode = 'light') {
-  const textPrimary = mode === 'light' ? '#1A1C1E' : '#E0E0E0'; // Light: AI/neutral/10, Dark: Lighter text
-  const textSecondary = mode === 'light' ? '#42474E' : '#A0A0A0'; // Light: AI/neutral variant/30, Dark: Lighter secondary text
-  const divider = mode === 'light' ? '#C2C7CE' : '#42474E'; // Light: AI/neutral variant/80, Dark: Darker divider
-  const background = mode === 'light' ? '#FFF' : '#121212'; // Light: White, Dark: Dark background
+  const textPrimary = mode === 'light' ? '#1e293b' : '#E0E0E0';
+  const textSecondary = mode === 'light' ? '#64748b' : '#A0A0A0';
+  const divider = mode === 'light' ? '#e2e8f0' : '#42474E';
+  const background = mode === 'light' ? '#f8fafc' : '#121212';
 
   const lightPalette = {
     primary: {
-      lighter: '#CCE5FF', // AI/primary/90
-      light: '#92CCFF', // AI/primary/80
-      main: '#006397', // AI/primary/40
-      dark: '#004B73', // AI/primary/30
-      darker: '#001D31' // AI/primary/10
+      lighter: '#e0f2fe',
+      light: '#7dd3fc',
+      main: '#0ea5e9',
+      dark: '#0284c7',
+      darker: '#0369a1',
     },
     secondary: {
-      lighter: '#D3E4F8', // AI/secondary/90
-      light: '#B7C8DB', // AI/secondary/80
-      main: '#4F6070', // AI/secondary/40
-      dark: '#384858', // AI/secondary/30
-      darker: '#0B1D2B' // AI/secondary/10
+      lighter: '#e9d5ff',
+      light: '#c084fc',
+      main: '#8b5cf6',
+      dark: '#7c3aed',
+      darker: '#6d28d9',
     },
+    success: { lighter: '#d1fae5', main: '#10b981', dark: '#059669' },
+    warning: { lighter: '#fef3c7', main: '#f59e0b', dark: '#d97706' },
+    error: { lighter: '#fee2e2', main: '#ef4444', dark: '#dc2626' },
+    info: { lighter: '#e0f2fe', main: '#0ea5e9', dark: '#0284c7' },
     grey: {
-      50: '#F9F9FC', // AI/neutral/98
-      100: '#F1F4F9', // AI/neutral/96
-      200: '#EBEEF3', // AI/neutral/94
-      300: '#E6E8EE', // AI/neutral/92
-      400: '#E2E2E5', // AI/neutral/90
-      500: '#D7DADF', // AI/neutral/87
-      600: divider, // AI/neutral variant/80
-      700: '#72787E', // AI/neutral variant/50
-      800: textSecondary, // AI/neutral variant/30
-      900: textPrimary // AI/neutral/10
+      50: '#f8fafc',
+      100: '#f1f5f9',
+      200: '#e2e8f0',
+      300: '#cbd5e1',
+      400: '#94a3b8',
+      500: '#64748b',
+      600: '#475569',
+      700: '#334155',
+      800: '#1e293b',
+      900: '#0f172a',
     },
     text: {
-      primary: textPrimary, // Light: AI/neutral/10, Dark: Lighter text
-      secondary: textSecondary // Light: AI/neutral variant/30, Dark: Lighter secondary text
+      primary: textPrimary,
+      secondary: textSecondary,
+      disabled: '#94a3b8',
     },
     divider,
     background: {
-      default: background // Light: White, Dark: Dark background
-    }
+      default: background,
+      paper: "#ffffff",
+    },
   };
 
   const darkPalette = {
@@ -120,13 +126,19 @@ export default function palette(mode = 'light') {
       900: textPrimary // Dark primary text
     },
     text: {
-      primary: textPrimary, // Light: AI/neutral/10, Dark: Lighter text
-      secondary: textSecondary // Light: AI/neutral variant/30, Dark: Lighter secondary text
+      primary: textPrimary,
+      secondary: textSecondary,
+      disabled: "#94a3b8",
     },
     divider,
     background: {
-      default: background // Light: White, Dark: Dark background
-    }
+      default: background,
+      paper: "#1e1e1e",
+    },
+    success: { lighter: "#052e16", main: "#34d399", dark: "#6ee7b7" },
+    warning: { lighter: "#422006", main: "#fbbf24", dark: "#fcd34d" },
+    error: { lighter: "#450a0a", main: "#f87171", dark: "#fca5a5" },
+    info: { lighter: "#003352", main: "#7dd3fc", dark: "#bae6fd" },
   };
 
   return mode === 'light' ? lightPalette : darkPalette;
